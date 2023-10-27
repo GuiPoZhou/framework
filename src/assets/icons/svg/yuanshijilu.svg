@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="12.16" height="14" viewBox="0 0 12.16 14">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #1890ff;
+      }
+    </style>
+  </defs>
+  <g id="icon_record" transform="translate(-293.62 -270.65)">
+    <path id="路径_50" data-name="路径 50" class="cls-1" d="M296.38,274.34v1.1h3.13v-1.1Zm0,2.95v1.1h6.64v-1.1Zm0,2.94v1.11h6.64v-1.11Zm0,0v1.11h6.64v-1.11Zm0-2.94v1.1h6.64v-1.1Zm0-2.95v1.1h3.13v-1.1Zm0,0v1.1h3.13v-1.1Zm0,2.95v1.1h6.64v-1.1Zm0,2.94v1.11h6.64v-1.11Zm5.79-9.58h-8.55v1.11h7.37v3.68h3.68v8.11h-9.94v-9.63h-1.11v10.73h12.16V274.27Zm-.07,3.69v-2.19l2.19,2.19Zm-5.72,7h6.64v-1.11h-6.64Zm0-2.95h6.64v-1.1h-6.64Zm0-4.05v1.1h3.13v-1.1Zm0,5.89v1.11h6.64v-1.11Zm0-2.94v1.1h6.64v-1.1Zm0-2.95v1.1h3.13v-1.1Z"/>
+  </g>
+</svg>

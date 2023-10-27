@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <script type="text/javascript" src="<%= BASE_URL %>lib/ant/g2plot.js"></script>
+  <script type="text/javascript" src="<%= BASE_URL %>lib/pako.js"></script>
+  <script type="text/javascript" src="<%= BASE_URL %>env.js"></script>
+  <script type="text/javascript" src="/pageOffice/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/eloamWebCamera.js"></script>
+  <script type="text/javascript" src="/lib/dayjs.js"></script>
+  <script type="text/javascript" src="/lib/parser/standalone.js"></script>
+  <script type="text/javascript" src="/lib/parser/parser-babel.js"></script>
+  <script type="text/javascript" src="<%= VUE_APP_BASE_API %>/pageoffice.js" id="po_js_main"></script>
+  <!-- <script type="text/javascript"  src="/lib/wpssdk.js" id="wpssdk"></script> -->
+
+<!--  这块onlineoffice的配置信息移到了系统管理-主题管理-项目信息维护，然后设置配置信息在framework中的App.vue中的CreateOnlyOfficeSource-->
+<!--  <script type="text/javascript" src="http://192.168.36.59:9980/web-apps/apps/api/documents/api.js"></script>-->
+<!--  <link rel="stylesheet" href="http://192.168.36.59:9980/sdkjs-plugins/plugins.css">-->
+  <!--[if lt IE 11]>
+  <script>window.location.href = '/html/ie.html';</script><![endif]-->
+  <style lang="scss" rel="stylesheet/scss" scoped>
+    html,
+    body,
+    #app {
+      height: 100%;
+      margin: 0px;
+      padding: 0px;
+      background-color: #fff;
+    }
+
+    .chromeframe {
+      margin: 0.2em 0;
+      background: #ccc;
+      color: #000;
+      padding: 0.2em 0;
+    }
+
+    #loader-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 999999;
+    }
+
+    #loader {
+      display: block;
+      position: relative;
+      left: 50%;
+      top: 50%;
+      width: 150px;
+      height: 150px;
+      margin: -75px 0 0 -75px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #FFF;
+      -webkit-animation: spin 2s linear infinite;
+      -ms-animation: spin 2s linear infinite;
+      -moz-animation: spin 2s linear infinite;
+      -o-animation: spin 2s linear infinite;
+      animation: spin 2s linear infinite;
+      z-index: 1001;
+    }
+
+    #loader:before {
+      content: "";
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      right: 5px;
+      bottom: 5px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #FFF;
+      -webkit-animation: spin 3s linear infinite;
+      -moz-animation: spin 3s linear infinite;
+      -o-animation: spin 3s linear infinite;
+      -ms-animation: spin 3s linear infinite;
+      animation: spin 3s linear infinite;
+    }
+
+    #loader:after {
+      content: "";
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      right: 15px;
+      bottom: 15px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #FFF;
+      -moz-animation: spin 1.5s linear infinite;
+      -o-animation: spin 1.5s linear infinite;
+      -ms-animation: spin 1.5s linear infinite;
+      -webkit-animation: spin 1.5s linear infinite;
+      animation: spin 1.5s linear infinite;
+    }
+
+
+    @-webkit-keyframes spin {
+      0% {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+      100% {
+        -webkit-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+      100% {
+        -webkit-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+
+
+    #loader-wrapper .loader-section {
+      position: fixed;
+      top: 0;
+      width: 51%;
+      height: 100%;
+      background: linear-gradient(to right, #c6edff 0%, #a3c6ff 100%);
+      z-index: 1000;
+      -webkit-transform: translateX(0);
+      -ms-transform: translateX(0);
+      transform: translateX(0);
+    }
+
+    #loader-wrapper .loader-section.section-left {
+      left: 0;
+    }
+
+    #loader-wrapper .loader-section.section-right {
+      right: 0;
+    }
+
+
+    .loaded #loader-wrapper .loader-section.section-left {
+      -webkit-transform: translateX(-100%);
+      -ms-transform: translateX(-100%);
+      transform: translateX(-100%);
+      -webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+      transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    }
+
+    .loaded #loader-wrapper .loader-section.section-right {
+      -webkit-transform: translateX(100%);
+      -ms-transform: translateX(100%);
+      transform: translateX(100%);
+      -webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+      transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    }
+
+    .loaded #loader {
+      opacity: 0;
+      -webkit-transition: all 0.3s ease-out;
+      transition: all 0.3s ease-out;
+    }
+
+    .loaded #loader-wrapper {
+      visibility: hidden;
+      -webkit-transform: translateY(-100%);
+      -ms-transform: translateY(-100%);
+      transform: translateY(-100%);
+      -webkit-transition: all 0.3s 1s ease-out;
+      transition: all 0.3s 1s ease-out;
+    }
+
+    .no-js #loader-wrapper {
+      display: none;
+    }
+
+    .no-js h1 {
+      color: #222222;
+    }
+
+    #loader-wrapper .load_title {
+      font-family: 'Open Sans';
+      color: #FFF;
+      font-size: 19px;
+      width: 100%;
+      text-align: center;
+      z-index: 9999999999999;
+      position: absolute;
+      top: 60%;
+      opacity: 1;
+      line-height: 30px;
+    }
+
+    #loader-wrapper .load_title span {
+      font-weight: normal;
+      font-style: italic;
+      font-size: 13px;
+      color: #FFF;
+      opacity: 0.5;
+    }
+
+
+    $colors: hsla(337, 84, 48, 0.75) hsla(160, 50, 48, 0.75) hsla(190, 61, 65, 0.75) hsla(41, 82, 52, 0.75);
+    $size: 2.5em;
+    $thickness: 0.5em;
+
+    // Calculated variables.
+    $lat: ($size - $thickness) / 2;
+    $offset: $lat - $thickness;
+
+    .loader {
+      position: relative;
+      width: $size;
+      height: $size;
+      transform: rotate(165deg);
+
+      &:before,
+      &:after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        width: $thickness;
+        height: $thickness;
+        border-radius: $thickness / 2;
+        transform: translate(-50%, -50%);
+      }
+
+      &:before {
+        animation: before 2s infinite;
+      }
+
+      &:after {
+        animation: after 2s infinite;
+      }
+    }
+
+    @keyframes before {
+      0% {
+        width: $thickness;
+        box-shadow: $lat (-$offset) nth($colors, 1),
+          (-$lat) $offset nth($colors, 3);
+      }
+      35% {
+        width: $size;
+        box-shadow: 0 (-$offset) nth($colors, 1),
+        0 $offset nth($colors, 3);
+      }
+      70% {
+        width: $thickness;
+        box-shadow: (-$lat) (-$offset) nth($colors, 1),
+        $lat $offset nth($colors, 3);
+      }
+      100% {
+        box-shadow: $lat (-$offset) nth($colors, 1),
+          (-$lat) $offset nth($colors, 3);
+      }
+    }
+
+    @keyframes after {
+      0% {
+        height: $thickness;
+        box-shadow: $offset $lat nth($colors, 2),
+          (-$offset) (-$lat) nth($colors, 4);
+      }
+      35% {
+        height: $size;
+        box-shadow: $offset 0 nth($colors, 2),
+          (-$offset) 0 nth($colors, 4);
+      }
+      70% {
+        height: $thickness;
+        box-shadow: $offset (-$lat) nth($colors, 2),
+          (-$offset) $lat nth($colors, 4);
+      }
+      100% {
+        box-shadow: $offset $lat nth($colors, 2),
+          (-$offset) (-$lat) nth($colors, 4);
+      }
+    }
+
+    .loader {
+      position: absolute;
+      top: calc(50% - #{$size / 2});
+      left: calc(50% - #{$size / 2});
+    }
+
+  </style>
+</head>
+<body>
+<div id="pedestal">
+  <div id="loader-wrapper">
+    <div class="loader"></div>
+    <!--		    <div class="loader-section section-left"></div>-->
+    <!--		    <div class="loader-section section-right"></div>-->
+    <!--		    <div class="load_title">正在加载系统资源，请耐心等待</div>-->
+  </div>
+  <script>
+    var SYSTEM_MATH_DECIMAL = 6
+    //函数部分
+    //对数:
+    function getLogValue(x, y) {
+      if (y) {
+        return dynamicFormulaRound(Math.log(y) / Math.log(x), SYSTEM_MATH_DECIMAL)
+      }
+      return dynamicFormulaRound(Math.log(x), SYSTEM_MATH_DECIMAL)
+    }
+
+    //幂函数
+    function getPowValue(x, y) {
+      return dynamicFormulaRound(Math.pow(x, y), SYSTEM_MATH_DECIMAL)
+    }
+
+    //开根函数
+    function getRadicalValue(x, y) {
+      if (y) {
+        dynamicFormulaRound(Math.pow(x, 1 / y), SYSTEM_MATH_DECIMAL)
+      }
+      return dynamicFormulaRound(Math.pow(x, 1 / 2), SYSTEM_MATH_DECIMAL)
+    }
+
+    //绝对值
+    function getAbsValue(x) {
+      return Math.abs(x)
+    }
+
+    //平均数
+    function getAvgValue() {
+      let arr = []
+      for (let i in arguments) {
+        if (typeof (arguments[i]) === 'number' || typeof (arguments[i]) === 'string') {
+          arr.push(arguments[i])
+        }
+      }
+      console.log('getAvgValue', arr)
+      if (arr.length > 0) {
+        let sum = 0
+        arr.forEach(item => {
+          sum += item
+        })
+        return dynamicFormulaRound(sum / arr.length, SYSTEM_MATH_DECIMAL)
+      }
+      return 0
+    }
+    //最大值
+    function getMaxValue(){
+        let arr = [];
+        for(let i in arguments){
+            if (typeof(arguments[i]) === 'number' || typeof(arguments[i]) === 'string'){
+                arr.push(arguments[i]);
+            }
+        }
+        console.log('getMaxValue', arr);
+        if(arr.length > 0){
+            return Math.max(...arr);
+        }
+        return 0;
+    }
+    //最小值
+    function getMinValue(){
+        let arr = [];
+        for(let i in arguments){
+            if (typeof(arguments[i]) === 'number' || typeof(arguments[i]) === 'string'){
+                arr.push(arguments[i]);
+            }
+        }
+        console.log('getMinValue', arr);
+        if(arr.length > 0){
+            return Math.min(...arr);
+        }
+        return 0;
+    }
+
+    /**
+     * 四舍五入
+     * @param  {[type]} num     [待处理数字]
+     * @param  {[type]} decimal [需要保留的小数位]
+     * @return {[type]}         []
+     */
+    function dynamicFormulaRound(num, decimal) {
+      if (isNaN(num)) {
+        return 0
+      }
+      const p1 = Math.pow(10, decimal + 1)
+      const p2 = Math.pow(10, decimal)
+      return Math.round(num * p1 / 10) / p2
+    }
+
+    function dateFormat(format, date) {
+      var o = {
+        'M+': date.getMonth() + 1, //month
+        'd+': date.getDate(),    //day
+        'h+': date.getHours(),   //hour
+        'm+': date.getMinutes(), //minute
+        's+': date.getSeconds(), //second
+        'q+': Math.floor((date.getMonth() + 3) / 3),  //quarter
+        'S': date.getMilliseconds() //millisecond
+      }
+      if (/(y+)/.test(format)) {
+        format = format.replace(RegExp.$1,
+          (date.getFullYear() + '').substr(4 - RegExp.$1.length))
+      }
+      for (var k in o) {
+        if (new RegExp('(' + k + ')').test(format)) {
+          format = format.replace(RegExp.$1,
+            RegExp.$1.length == 1 ? o[k] :
+              ('00' + o[k]).substr(('' + o[k]).length))
+        }
+      }
+      return format
+    }
+
+    function refreshReport() {
+      console.log(1111);
+      console.log(window.thisComponent);
+      window.thisComponent.refreshReport()
+    }
+  </script>
+</div>
+</body>
+</html>

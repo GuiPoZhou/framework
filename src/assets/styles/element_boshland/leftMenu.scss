@@ -1,0 +1,69 @@
+.router-link-active .submenu-title-noDropdown{
+    // background-color: #D5E8FF !important;
+    background: #c6edff; background: -moz-linear-gradient(to right,  #6d79ff 0%,#0E1438 100%); 
+    background: -webkit-linear-gradient(to right,  #6d79ff 0%,#0E1438 100%); 
+    background: linear-gradient(to right,  #6d79ff 0%,#0E1438 100%);
+    background-size: 200% 100%; /* 更宽的背景尺寸，用于实现颜色移动效果 */
+        animation: waveAnimation 5s linear infinite;
+    color: #FFF !important;
+    // border-left: #364BC6 solid 4px !important;
+    font-weight: 600;
+}
+.leftMenu {
+   
+    // .router-link-active .is-active {
+    //     // background-color: #D5E8FF !important;
+    //     background: #c6edff; background: -moz-linear-gradient(to right,  #6d79ff 0%,#0E1438 100%); 
+    //     background: -webkit-linear-gradient(to right,  #6d79ff 0%,#0E1438 100%); 
+    //     background: linear-gradient(to right,  #6d79ff 0%,#0E1438 100%);
+    //     color: #FFF !important;
+    //     // border-left: #364BC6 solid 4px !important;
+    //     font-weight: bold;
+    //     font-size: 1rem;
+    // }
+    .router-link-active .is-active {
+        color: #FFF !important;
+        font-weight: bold;
+        font-size: 1rem;
+        background: linear-gradient(to right, #6d79ff 0%, #0E1438 100%);
+        background-size: 200% 100%; /* 更宽的背景尺寸，用于实现颜色移动效果 */
+        animation: waveAnimation 5s linear infinite;
+      }
+      
+
+
+
+    .el-menu-item:hover {
+        outline: 0 !important;
+        color: #FFF !important;
+        background: #c6edff; background: -moz-linear-gradient(to right,  #6d79ff 0%,#0E1438 100%); 
+        background: -webkit-linear-gradient(to right,  #6d79ff 0%,#0E1438 100%); 
+        background: linear-gradient(to right,  #6d79ff 0%,#0E1438 100%);
+        background-size: 200% 100%; /* 更宽的背景尺寸，用于实现颜色移动效果 */
+        animation: waveAnimation 5s linear infinite;
+    }
+
+    .el-submenu .el-submenu__title:hover {
+        background: #c6edff; background: -moz-linear-gradient(to right,  #6d79ff 0%,#0E1438 100%); 
+        background: -webkit-linear-gradient(to right,  #6d79ff 0%,#0E1438 100%); 
+        background: linear-gradient(to right,  #6d79ff 0%,#0E1438 100%);
+        background-size: 200% 100%; /* 更宽的背景尺寸，用于实现颜色移动效果 */
+        animation: waveAnimation 5s linear infinite;
+        color: #FFF !important;
+
+        i {
+            color: #364BC6;
+        }
+    }
+}
+@keyframes waveAnimation {
+  0% {
+    background-position: 0 50%; /* 初始位置 */
+  }
+  50% {
+    background-position: 100% 50%; /* 中间位置 */
+  }
+  100% {
+    background-position: 0 50%; /* 返回初始位置 */
+  }
+}

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="13.916" height="14" viewBox="0 0 13.916 14">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #000;
+      }
+
+      .cls-2 {
+        fill: none;
+        stroke: #000;
+        stroke-miterlimit: 10;
+      }
+    </style>
+  </defs>
+  <g id="icon_testing" transform="translate(-30 -631)">
+    <path id="路径_24" data-name="路径 24" class="cls-1" d="M566.91,164.7l-3.4-4.32v-5.7h-6.07V156h1v-.32h4.07v5.05l.22.27,3.39,4.31a1.455,1.455,0,0,1,.16,1.55,1.435,1.435,0,0,1-1.31.82h-8.98a1.46,1.46,0,0,1-1.15-2.37l3.39-4.31.21-.27v-3.31h-1v2.96l-3.39,4.32a2.46,2.46,0,0,0,1.94,3.98h8.98A2.465,2.465,0,0,0,566.91,164.7Z" transform="translate(-523.519 476.32)"/>
+    <path id="路径_25" data-name="路径 25" class="cls-2" d="M563.375,164.924l-1.15-2-1.6,2.475-1.223-1.775-1.775,1.575" transform="translate(-523.519 476.32)"/>
+  </g>
+</svg>

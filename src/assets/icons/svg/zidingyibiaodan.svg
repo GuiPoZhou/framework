@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="13.977" height="14.055" viewBox="0 0 13.977 14.055">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #1890ff;
+      }
+    </style>
+  </defs>
+  <g id="icon_form" transform="translate(-379.62 -210.73)">
+    <path id="路径_37" data-name="路径 37" class="cls-1" d="M380.62,210.73v.98h4.57v4.59H380.6v-2.5h-.98v3.475h6.55v-6.55Z"/>
+    <path id="路径_38" data-name="路径 38" class="cls-1" d="M390.325,210.746l-3.263,3.262,3.257,3.256L393.581,214Zm0,5.122L388.459,214l1.86-1.86,1.866,1.866Z"/>
+    <path id="路径_39" data-name="路径 39" class="cls-1" d="M392.449,213.616"/>
+    <path id="路径_40" data-name="路径 40" class="cls-1" d="M379.62,218.235v6.55h6.55v-6.55Zm5.567,5.567H380.6v-4.583h4.584Z"/>
+    <path id="路径_41" data-name="路径 41" class="cls-1" d="M387.047,218.235v6.55h6.55v-6.55Zm5.566,5.567H388.03v-4.583h4.583Z"/>
+  </g>
+</svg>

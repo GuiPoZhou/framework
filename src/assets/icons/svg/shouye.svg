@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="13.96" height="12.94" viewBox="0 0 13.96 12.94">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #1890ff;
+      }
+    </style>
+  </defs>
+  <g id="icon_home" transform="translate(-76.02 -155.21)">
+    <path id="路径_1" data-name="路径 1" class="cls-1" d="M83,155.21l-6.98,4.4.56.9.74-.46v-.01l1.59-1.03v.02l.03-.02L83,156.46l4.39,2.76v7.87H78.61v-5.54H77.56v6.6H88.44V159.9l.98.61.56-.9Z"/>
+    <rect id="矩形_5" data-name="矩形 5" class="cls-1" width="1.054" height="4.928" transform="translate(80.536 163.217)"/>
+    <rect id="矩形_6" data-name="矩形 6" class="cls-1" width="1.054" height="4.928" transform="translate(84.41 163.217)"/>
+    <rect id="矩形_7" data-name="矩形 7" class="cls-1" width="4.928" height="1.054" transform="translate(80.536 163.217)"/>
+    <path id="路径_2" data-name="路径 2" class="cls-1" d="M85.75,162.119"/>
+  </g>
+</svg>
