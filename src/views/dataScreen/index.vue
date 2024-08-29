@@ -45,7 +45,7 @@ export default {
     position: fixed;
     left: 0;
     top: 0;
-    z-index: 10001;
+    z-index: 2000;
 }
 
 #appContainerScreen {

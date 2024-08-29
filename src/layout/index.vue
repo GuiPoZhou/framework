@@ -1,10 +1,21 @@
 <template>
-  <div :class="classObj" class="app-wrapper" :style="{ '--current-color': theme }">
-    <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
+  <div
+    :class="classObj"
+    class="app-wrapper"
+    :style="{ '--current-color': theme }"
+  >
+    <div
+      v-if="device === 'mobile' && sidebar.opened"
+      class="drawer-bg"
+      @click="handleClickOutside"
+    />
     <sidebar v-if="!sidebar.hide" class="sidebar-container" />
-    <div :class="{ hasTagsView: needTagsView, sidebarHide: sidebar.hide }" class="main-container">
+    <div
+      :class="{ hasTagsView: needTagsView, sidebarHide: sidebar.hide }"
+      class="main-container"
+    >
       <div :class="{ 'fixed-header': fixedHeader }">
-        <navbar ref="navbar" @showDataScreen="showDataScreen=true"/>
+        <navbar ref="navbar" @showDataScreen="showDataScreen = true" />
         <!--        <tags-view v-if="needTagsView" />-->
       </div>
       <app-main />
@@ -12,7 +23,7 @@
         <settings />
       </right-panel>
     </div>
-
+    <sysFlotTools v-show="$store.state.system.systemInfo.extData.openDCWJ" />
   </div>
 </template>
 
@@ -22,7 +33,8 @@ import { AppMain, Navbar, Settings, Sidebar, TagsView } from "./components";
 import ResizeMixin from "./mixin/ResizeHandler";
 import { mapState } from "vuex";
 import variables from "@/assets/styles/variables.scss";
-import { setDefaultMountApp, start } from 'qiankun'
+import { setDefaultMountApp, start } from "qiankun";
+import sysFlotTools from "./components/tools/index.vue";
 export default {
   name: "Layout",
   components: {
@@ -32,11 +44,12 @@ export default {
     Settings,
     Sidebar,
     TagsView,
+    sysFlotTools,
   },
   data() {
     return {
-      showDataScreen: false
-    }
+      showDataScreen: false,
+    };
   },
   mixins: [ResizeMixin],
   async mounted() {
@@ -53,7 +66,6 @@ export default {
     // });
     // app.mounted ? app.show() : await app.mount();
 
-
     this.caluateWidth();
     // var that = this;
     // // 浏览器窗口变化 实时监听
@@ -66,11 +78,11 @@ export default {
     //     },
     //     false
     // );
-    start({ singular: false })
+    start({ singular: false });
     // this.$router.push('/micGenric/index')
     // setDefaultMountApp('/micGenric/index');
 
-
+    this.getGlobal();
   },
   computed: {
     ...mapState({
@@ -94,6 +106,12 @@ export default {
     },
   },
   methods: {
+    // 获取全局配置
+    getGlobal() {
+      this.$net("/system/context", "get").then((res) => {
+        this.$store.commit("globalConfiguration/setGlobal", res.data);
+      });
+    },
     // 计算实时宽度
     caluateWidth() {
       let windowHeight =

@@ -20,7 +20,7 @@ export default {
                 checkStrictly: widgetInfo.checkStrictly,
                 autoExpandParent: widgetInfo.autoExpandParent,
                 checkOnClickNode: widgetInfo.checkOnClickNode,
-
+                nodeKey:widgetInfo.nodeKey||'-',
                 lazy: widgetInfo.lazy,
             }
             // 懒加载

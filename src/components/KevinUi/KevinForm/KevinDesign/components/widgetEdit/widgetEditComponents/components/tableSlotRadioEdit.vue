@@ -60,6 +60,13 @@
                         <el-divider content-position="left">单选框事件</el-divider>
                         <el-row>
                             <el-col :span="12">
+                                <el-form-item label="状态脚本事件" prop="events.disabledCode">
+                                    <el-input v-model="slotParams.events.disabledCode" readonly>
+                                        <el-button slot="append" @click="e_editdisabledCode">编辑</el-button>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
                                 <el-form-item label="Input事件" prop="events.input">
                                     <el-input v-model="slotParams.events.input" readonly>
                                         <el-button slot="append" @click="e_editInput">编辑</el-button>
@@ -101,6 +108,10 @@ export default {
         }
     },
     methods: {
+        e_editdisabledCode() {
+            this.editType = 'editDisabledCode'
+            this.$refs.KevinEditors.changeEditor({ value: this.slotParams.events.disabledCode || 'return false' });
+        },
         e_deleteSource(index) {
             this.$confirm('确定删除该条数据源').then(() => {
                 this.slotParams.dataSource.list.splice(index, 1)
@@ -125,11 +136,11 @@ export default {
                 this.$message.error('请先编码数据源远程获取脚本')
                 return
             }
-            new Function('ctx', 'columnsInfo', this.slotParams.dataSource.optionsGetEvents)(window.KevinContext, this.slotParams)
+            new Function('ctx', 'columnsInfo', this.slotParams.dataSource.optionsGetEvents)(window.KevinContext, { vModelActionOptions: this.slotParams })
         },
         e_editSelectServerEvents() {
             this.editType = 'serverDataEvents'
-            this.$refs.KevinEditors.changeEditor({ value: this.slotParams.dataSource.optionsGetEvents || "let params = { label: '测试', value: 0, }; columnsInfo.dataSource.list= [params]; " });
+            this.$refs.KevinEditors.changeEditor({ value: this.slotParams.dataSource.optionsGetEvents || "let params = { label: '测试', value: 0, }; columnsInfo.vModelActionOptions.dataSource.list= [params]; " });
         },
         e_editInput() {
             this.editType = 'editInput'
@@ -140,6 +151,8 @@ export default {
                 this.slotParams.events.input = this.formatCode(code)
             } else if (this.editType == 'serverDataEvents') {
                 this.slotParams.dataSource.optionsGetEvents = this.formatCode(code)
+            } else if (this.editType == 'editDisabledCode') {
+                this.slotParams.events.disabledCode = this.formatCode(code)
             }
         },
         formatCode(code) {

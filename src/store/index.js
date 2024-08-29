@@ -7,6 +7,7 @@ import permission from './modules/permission'
 import settings from './modules/settings'
 import getters from './getters'
 import system from './modules/system'
+import globalConfiguration from './modules/globalConfiguration.js'
 //框架关键值
 import boshland from './modules/boshland/boshland'
 
@@ -20,7 +21,8 @@ const store = new Vuex.Store({
     permission,
     settings,
     boshland,
-    system
+    system,
+    globalConfiguration
   },
   getters
 })

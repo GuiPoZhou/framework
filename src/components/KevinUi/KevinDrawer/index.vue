@@ -1,6 +1,6 @@
 <template>
     <div class="kevin_drawer">
-        <el-drawer :visible.sync="show" close-on-press-escape destroy-on-close :show-close="false" @close="close"
+        <el-drawer :visible.sync="show"  :close-on-press-escape="false" destroy-on-close :show-close="false" @close="close"
             :wrapperClosable="false" size="100%" custom-class="customerdraw">
             <div slot="title" class="kevin_drawer_head" ref="kevin_drawer_head">
                 <logoVue :title="title"/>

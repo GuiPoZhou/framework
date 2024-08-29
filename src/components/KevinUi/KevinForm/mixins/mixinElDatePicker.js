@@ -1,7 +1,7 @@
 export default {
     methods: {
         renderElDatePicker(widgetInfo, widgetIndex) {
-            if (widgetInfo.isHide) {
+            if (widgetInfo.isHide&& !this.draggableOpen) {
                 return ''
             }
             let ELDatePickerOptions = {
@@ -9,6 +9,7 @@ export default {
                 format: widgetInfo.format,
                 valueFormat: widgetInfo.valueFormat,
                 clearable: widgetInfo.clearable,
+                size:widgetInfo.size,
                 type: widgetInfo.type,
                 disabled: widgetInfo.disabled,
                 pickerOptions: this.el_date_pickerPicerOptions(widgetInfo)

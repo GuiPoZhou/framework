@@ -13,14 +13,24 @@ export default {
                         new Function('ctx', '_this', 'widgetInfo', widgetInfo.options.optionsGetEvents)(this.context, this, widgetInfo)
                     }
                 }
-                if (widgetInfo.components == 'el-table') {
+                if (widgetInfo.components == 'el-table' || widgetInfo.components == 'el-table-tree') {
                     widgetInfo.tableColumns.forEach(columnsInfo => {
                         if (columnsInfo.vModelActionType == 'select' || columnsInfo.vModelActionType == 'radio') {
                             if (columnsInfo.vModelActionOptions.dataSource.executionMethod == 'auto' && columnsInfo.vModelActionOptions.dataSource.optionsGetEvents) {
-                                new Function('ctx', '_this', 'widgetInfo', 'columnsInfo', columnsInfo.vModelActionOptions.dataSource.optionsGetEvents)(this.context, this, widgetInfo, columnsInfo)
+                                try{
+                                    new Function('ctx', '_this', 'widgetInfo', 'columnsInfo', columnsInfo.vModelActionOptions.dataSource.optionsGetEvents)(this.context, this, widgetInfo, columnsInfo)
+
+                                }catch{
+                                    console.log('table 行内远程数据源异常',widgetInfo.WIDGETID,columnsInfo)
+                                }
                             }
                         }
                     })
+                }
+                if (widgetInfo.components == 'kevin-upload-device') {
+                    if (widgetInfo.typeDataSource) {
+                        new Function('ctx', '_this', 'widgetInfo', widgetInfo.typeDataSource)(this.context, this, widgetInfo)
+                    }
                 }
                 if (widgetInfo.children && widgetInfo.children.length != 0) {
                     this.getWidgetServerData(widgetInfo.children)

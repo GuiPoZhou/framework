@@ -1,14 +1,20 @@
 <script>
-import { getToken } from '@/utils/auth'
+// import { getToken } from '@/utils/auth'
+const getToken = ()=>{
+    return localStorage.getItem('Admin-Token')
+}
 import KevinTable from './components/kevinTable.vue'
 import kevinTreeTable from './components/kevinTreeTable.vue'
 import kevinActivity from './components/kevinActivity.vue'
 import kevinUploadDevice from './components/kevinUploadDevice.vue'
 import kevinDeviceAcceptance from './components/kevinDeviceAcceptance'
+import verificationPlanModule from './components/verificationPlanModule.vue'
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import kevinBatch from './components/kevinBatch.vue'
 import kevinPagination from './components/kevinPagination.vue'
+import kevinEquipmentChart from './components/kevinEquipmentChart.vue'
+// import kevinDiaLog from './components/kevinDiaLog.vue'
 import draggable from 'vuedraggable'
 import Clipboard from 'clipboard'
 import { v4 as uuidv4 } from 'uuid';
@@ -27,6 +33,7 @@ import mixinKevinActivity from './mixins/mixinKevinActivity'
 import mixinKevinUtils from './mixins/utils/mixinKevinUtils'
 import mixinKevinUploadDevice from './mixins/mixinKevinUploadDevice'
 import mixinKevinDeviceAcceptance from './mixins/mixinKevinDeviceAcceptance'
+import mixinKevinVerficationPlan from './mixins/mixinKevinVerficationPlan'
 import mixinKevinTreeSelect from './mixins/mixinKevinTreeSelect'
 import mixinELButton from './mixins/mixinELButton'
 import mixinELTabs from './mixins/mixinELTabs'
@@ -37,6 +44,9 @@ import mixinElColorPicker from './mixins/mixinElColorPicker'
 import mixinELCheckBox from './mixins/mixinELCheckBox'
 import mixinKevinGrid from './mixins/mixinKevinGrid'
 import mixinELTree from './mixins/mixinELTree'
+import mixinKevinEquipmentChart from './mixins/mixinKevinEquipmentChart'
+import mixinKevinDiaLog from './mixins/mixinKevinDiaLog'
+import kevinDialogIcon from '@/assets/images/kevinDialogIcon.png'
 export default {
 	mixins: [
 		mixinRenderMain,
@@ -56,6 +66,7 @@ export default {
 		mixinKevinUtils,
 		mixinKevinUploadDevice,
 		mixinKevinDeviceAcceptance,
+		mixinKevinVerficationPlan,
 		mixinKevinTreeSelect,
 		mixinELButton,
 		mixinKevinBatch,
@@ -63,7 +74,9 @@ export default {
 		mixinElColorPicker,
 		mixinELCheckBox,
 		mixinKevinGrid,
-		mixinELTree
+		mixinELTree,
+		mixinKevinEquipmentChart,
+		mixinKevinDiaLog
 	],
 	components: {
 		draggable,
@@ -72,9 +85,12 @@ export default {
 		kevinActivity,
 		kevinUploadDevice,
 		kevinDeviceAcceptance,
+		verificationPlanModule,
 		Treeselect,
 		kevinBatch,
 		kevinPagination,
+		kevinEquipmentChart,
+		// kevinDiaLog
 	},
 	props: {
 		editEnv: {
@@ -117,15 +133,14 @@ export default {
 	},
 	data() {
 		return {
+			kevinDialogIcon,
 			touchStartThreshold: 50,
 			fallbackTolerance: 50,
 		}
 	},
 
 	methods: {
-
-
-
+		getList(){},
 		renderElDivider(widgetInfo, widgetIndex) {
 			return (
 				<el-col class={this.draggableOpen ? 'RenderCol' : ''} key={widgetIndex} span={widgetInfo.colSpan}>
@@ -141,10 +156,10 @@ export default {
 			if (this.draggableOpen) {
 				return (
 					<div class="eidt_area">
-						<el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
+						{/* <el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
 							onClick={() => {
 								this.copyWidgetId()
-							}}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag>
+							}}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag> */}
 						<el-button style="color:red" type='text' onClick={() => {
 							this.removeTabsWidget(params)
 						}}>删除组件
@@ -211,10 +226,10 @@ export default {
 			if (this.draggableOpen) {
 				return (
 					<div class="eidt_area">
-						<el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
+						{/* <el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
 							onClick={() => {
 								this.copyWidgetId()
-							}}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag>
+							}}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag> */}
 						<el-button type='text' onClick={() => {
 							this.addButton(params)
 						}}>新增按钮
@@ -238,11 +253,15 @@ export default {
 			if (this.draggableOpen) {
 				return (
 					<div class="eidt_area">
-						<el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
+						{/* <el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
 							onClick={() => {
 								this.copyWidgetId()
-							}}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag>
-						<el-button style="color:red" type='text' onClick={() => {
+							}}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag> */}
+						<el-button type='text' onClick={() => {
+							this.copyNodeWidget(params)
+						}}>复制组件
+						</el-button>
+						<el-button style="color:#f5222d" type='text' onClick={() => {
 							this.removeTabsWidget(params)
 						}}>删除组件
 						</el-button>
@@ -250,22 +269,68 @@ export default {
 							this.editWidget(params)
 						}}>编辑组件
 						</el-button>
+
 					</div>
 				)
 			}
 		},
+		copyNodeWidget(params) {
+			this.$confirm('确定复制该组件？复制后的内容自行修改！！！！').then(re => {
+				let parentInfo = this.findParentNode(this.Widget, params.WIDGETID)
+				let copyInfo = JSON.parse(JSON.stringify(params))
+				copyInfo.title = '复制内容'
+				copyInfo.WIDGETID = uuidv4()
+				if (parentInfo) {
 
+					parentInfo.children.push(copyInfo)
+				} else {
+					this.Widget.push(copyInfo)
+				}
+			})
+
+		},
+		findParentNode(tree, nodeId, parent = null) {
+			for (const node of tree) {
+				if (node.WIDGETID === nodeId) {
+					return parent; // 找到了目标节点，返回其父级节点
+				}
+
+				if (node.children && node.children.length > 0) {
+					const foundParent = this.findParentNode(node.children, nodeId, node);
+					if (foundParent) {
+						return foundParent; // 在子节点中找到了目标节点，返回其父级节点
+					}
+				}
+			}
+
+			return null; // 没有找到目标节点
+		},
 		//        为form-item 定义校验规则
 		configFormItemRules(widgetInfo) {
 			if (!widgetInfo.rules.isValidate) {
 				return []
 			}
-			let validateParams = {
-				required: true,
-				message: widgetInfo.rules.validateTitle,
-				trigger: widgetInfo.rules.validateType
+			if (!widgetInfo.rules.auto) {
+				let validateParams = {
+					required: true,
+					message: widgetInfo.rules.validateTitle,
+					trigger: widgetInfo.rules.validateType
+				}
+				return [validateParams]
+			} else {
+				let ruleParams = {
+					validator: this.configFormItemRulesAuto(widgetInfo),
+					trigger: widgetInfo.rules.validateType,
+					required: true,
+				}
+				return [ruleParams]
 			}
-			return [validateParams]
+
+		},
+		configFormItemRulesAuto(widgetInfo) {
+			return (rule, value, callback) => {
+				return new Function('ctx', '_this', 'widgetInfo', 'rule', 'value', 'callback', widgetInfo.rules.autoEvents)(this.context, this, widgetInfo, rule, value, callback)
+			}
 		},
 		formatUUIDWithStars(inputString, maxLength = 14) {
 			if (typeof inputString !== 'string') {
@@ -387,10 +452,10 @@ export default {
 			if (this.draggableOpen) {
 				return (
 					<div class="eidt_area">
-						<el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
+						{/* <el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
 							onClick={() => {
 								this.copyWidgetId()
-							}}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag>
+							}}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag> */}
 						<el-button style="color:red" type='text' onClick={() => {
 							this.removeTabsWidget(params)
 						}}>删除区域
@@ -444,10 +509,10 @@ export default {
 			if (this.draggableOpen) {
 				return (
 					<div class="eidt_area">
-						<el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
+						{/* <el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
 							onClick={() => {
 								this.copyWidgetId()
-							}}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag>
+							}}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag> */}
 						<el-button type='text' onClick={() => {
 							this.removeTabsWidget(params)
 						}}>删除行
@@ -504,10 +569,10 @@ export default {
 
 	.eidt_area {
 		width: fit-content;
-		padding: 0.1rem 0.3rem;
-		background-color: #f3f9ff;
-		border-left: 1px dashed #1890ff;
-		border-bottom: 1px dashed #1890ff;
+		padding: 0.1rem;
+		background-color: #e6f7ff;
+		border-left: 1px dashed #0080ff;
+		border-bottom: 1px dashed #0080ff;
 		position: absolute;
 		top: 0;
 		z-index: 22;
@@ -516,7 +581,17 @@ export default {
 		flex-direction: row;
 		justify-content: space-around;
 		align-items: center;
+		border-bottom-left-radius: 10px;
+
+		/deep/.el-button {
+			font-size: 0.7rem;
+		}
 	}
+}
+
+.kevinFormHide {
+	border: 1px dashed #79C6CD;
+	background-color: rgba(121, 198, 205, 0.7);
 }
 
 
@@ -524,12 +599,16 @@ export default {
 	padding-top: 3.5rem;
 }
 
+.RenderCol_Button {
+	padding-top: 1.3rem;
+}
+
 .KevinGridEdit {
-	padding-top: 3.5rem;
+	padding-top: 2.5rem;
 }
 
 .RenderColTable {
-	padding-top: 3rem;
+	padding-top: 1.6rem;
 }
 
 .RenderCol:hover {
@@ -625,6 +704,7 @@ export default {
 	flex-direction: row;
 	align-items: center;
 	padding: 0.3rem;
+	border-radius: 10px;
 
 	.kevin-row-left {
 		height: 100%;
@@ -658,5 +738,25 @@ export default {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+}
+
+.kevin_dialog_edit{
+	width: 100%;
+	padding: 0.7rem 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	.k_d_e_icon{
+		width: 5.5rem;
+		height: 5rem;
+	}
+	.k_d_e_label{
+		font-size: 1rem;
+		color: #1890ff;
+		font-weight: bold;
+		display: block;
+		margin-top: 0.7rem;
+	}
 }
 </style>

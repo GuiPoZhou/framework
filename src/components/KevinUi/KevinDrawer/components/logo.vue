@@ -1,6 +1,6 @@
 <template>
     <div class="drawerlogoarea">
-        <img class="kevin_boshland" src="./logo.png" alt="">
+        <!-- <img class="kevin_boshland" src="./logo.png" alt=""> -->
         <span class="drawertitle">{{title}}</span>
     </div>
 </template>
@@ -28,6 +28,7 @@ export default {
 }
 
 .drawertitle {
+    margin-left: 1rem;
     font-size: 1.4rem;
     background: linear-gradient(to right, #1267CE 33%, #D4D4D4 33%, #D4D4D4 66%, #EB8918 66%);
     background-clip: text;

@@ -5,9 +5,8 @@
             <div class="k_c_area">
                 <div slot="reference" class="kevin_components_item" v-for="(item, itemIndex) in v.list" :key="itemIndex"
                     @click="e_selectComponents(item)">
-                    <el-popover placement="top-start" trigger="hover" :content="item.describe ? item.describe : ''">
-                        <span slot="reference">{{ item.title }}</span>
-                    </el-popover>
+                    <!-- <svg-icon class="k_c_area_icon" :icon-class="item.icon" /> -->
+                    <span>{{ item.title }}</span>
                 </div>
             </div>
         </div>
@@ -40,11 +39,12 @@ export default {
 </script>
 <style scoped lang="scss">
 .kevin_components_area {
+    min-height: 100%;
     .kevin_components_list {
         margin-bottom: 1rem;
         background-color: #fff;
         border-radius: 10px;
-        padding: 0.5rem 1rem;
+        padding: 10px;
 
         .k_c_l_title {
             font-size: 1rem;
@@ -58,27 +58,34 @@ export default {
             align-items: center;
             margin-top: 1rem;
             flex-wrap: wrap;
+            justify-content: space-between;
         }
 
         .kevin_components_item {
-            width: fit-content;
-            padding: 0.4rem 0.5rem;
-            background-color: #ccddff;
-            border-radius: 5px;
+            width: 47%;
+            height: 28px;
+            background-color: #F4F6FC;
+            margin-bottom: 0.6rem;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            line-height: 28px;
+            color: #333;
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            margin-right: 1rem;
-            margin-bottom: 0.6rem;
-            font-size: 0.7rem;
-            font-weight: 400;
-            cursor: pointer;
+            .k_c_area_icon {
+                font-size: 14px;
+                margin: 0 3px;
+            }
 
-            // &:hover {
-            //     border: 1px dashed #4468EE;
-            //     color: #4468EE;
-            // }
+            &:hover {
+                border: 1px dashed #1890ff;
+                color: #1890ff;
+                // height: 27px;
+                // line-height: 27px;
+            }
         }
 
     }

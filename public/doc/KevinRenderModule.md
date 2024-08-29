@@ -10,7 +10,7 @@
                 <el-form :model="form" ref="form" label-width="100px" @submit.native.prevent :form="form" class="demo-ruleForm"
                     :label-position="KevinJson.KevinWidget.formlabelPosition || 'top'">
                     <el-row v-if="!nullKevinJson">
-                        <KevinRender ref="KevinRender" :context="context" :Widget="renderWidget" :form="form" />
+                        <kevin-render ref="KevinRender" :context="context" :Widget="renderWidget" :form="form" />
                     </el-row>
                     <el-empty v-else :description="`请配置【${widgetId}】低码唯一键`"></el-empty>
                 </el-form>

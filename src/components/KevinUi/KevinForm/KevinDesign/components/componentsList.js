@@ -9,6 +9,54 @@ const componentsList = [
                 colSpan: 24,
                 children: []
             },
+            // {
+            //     components: "kevin-formItem-group",
+            //     describe: "kevin-formItem-group",
+            //     title: "组合表单项",
+            //     colSpan: 24,
+            //     children: [
+            //         {
+            //             components: "el-input",
+            //             icon: "kevin_input",
+            //             title: "输入框",
+            //             colSpan: 12,
+            //             vModel: "vModel",
+            //             isHide: false,
+            //             vModelType: 'fixed',
+            //             placeholder: "请填入内容",
+            //             clearable: false,
+            //             disabled: false,
+            //             readonly: false,
+            //             type: "text",
+            //             rows: 2,
+            //             autosize: false,
+            //             rules: {
+            //                 isValidate: false,
+            //                 validateTitle: '',
+            //                 validateType: 'blur'
+            //             },
+            //             slot: {
+            //                 isSlot: false,
+            //                 slotType: 'button',
+            //                 slotButtonIcon: '',
+            //                 slotIconName: '',
+            //                 slotSpanContent: '',
+            //                 events: {
+            //                     slotButtonEvents: '',
+            //                     callBackEvents: '',
+            //                 }
+            //             },
+            //             events: {
+            //                 blur: '',
+            //                 focus: '',
+            //                 change: '',
+            //                 clear: '',
+            //                 input: '',
+            //                 enter: '',
+            //             }
+            //         },
+            //     ]
+            // },
             {
                 components: "kevin-grid",
                 describe: "双区域版",
@@ -48,6 +96,40 @@ const componentsList = [
                         ]
                     },
                 ]
+            }, {
+                components: "kevin-dialog",
+                dialogType: "max",//max 大型弹框  mini小型弹框
+                describe: "弹框组件",
+                colSpan: 24,
+                title: "弹框组件",
+                canOpen: false,//打开 或者关闭 
+                width: '80%',//弹框最小化时的宽度
+                fullScreen: true,//是否默认全屏
+                attrs: {},//向弹框组件传递的属性
+                childrenSource: 'quote',//自定义设计 desgin    引用 quote 引用其实就是引用其他的表单
+                quoteId: '',//如果是引用的话 则需要指定需要应用的表单key
+                quoteTitle: '',//引用的组件的标题
+                children: [],//如果是自定义设计的话 需要定义表单
+                callback: [
+                    {
+                        label: 'close',
+                        remark: '弹框关闭回调事件',
+                        events: 'widgetInfo.canOpen = false'
+                    }
+                ],//弹框关闭、确定等等的回调事件
+            }, {
+                components: "kevin-v-node",
+                describe: "虚拟节点",
+                isHide: false,
+                colSpan: 24,
+                title: "虚拟节点",
+                nodeRender: '',
+            }, {
+                components: "kevin-v-engine",
+                describe: "低码子表单",
+                title: "低码子表单",
+                isHide: false,
+                colSpan: 24,
             }
         ]
     },
@@ -56,7 +138,7 @@ const componentsList = [
         list: [
             {
                 components: "el-button",
-                title: 'Button按钮',
+                title: '按钮套件',
                 isHide: false,
                 colSpan: 24,
                 children: [
@@ -94,6 +176,13 @@ const componentsList = [
                 events: {
                     change: ''
                 }
+            }, {
+                components: 'kevin-wang-editor',
+                title: ' 富文本',
+                isHide: false,
+                disabled: false,
+                colSpan: 24,
+                height: '500',
             }
         ]
     },
@@ -102,7 +191,8 @@ const componentsList = [
         list: [
             {
                 components: "el-input",
-                title: "Input 输入框",
+                icon: "kevin_input",
+                title: "输入框",
                 colSpan: 12,
                 vModel: "vModel",
                 isHide: false,
@@ -113,7 +203,7 @@ const componentsList = [
                 readonly: false,
                 type: "text",
                 rows: 2,
-                autosize:false,
+                autosize: false,
                 rules: {
                     isValidate: false,
                     validateTitle: '',
@@ -141,7 +231,8 @@ const componentsList = [
             },
             {
                 components: "el-autocomplete",
-                title: "远程搜索输入框",
+                icon: "kevin_autocomplete",
+                title: "远程搜索框",
                 colSpan: 12,
                 vModel: "vModel",
                 isHide: false,
@@ -159,7 +250,8 @@ const componentsList = [
             },
             {
                 components: "el-input-number",
-                title: "InputNumber 计数器",
+                title: "计数器",
+                icon: "kevin_input_number",
                 colSpan: 12,
                 vModel: "vModel",
                 isHide: false,
@@ -184,7 +276,8 @@ const componentsList = [
             },
             {
                 components: "el-select",
-                title: "Select 选择器",
+                icon: "kevin_select",
+                title: "下拉选择器",
                 isHide: false,
                 colSpan: 12,
                 vModel: "vModel",
@@ -238,6 +331,7 @@ const componentsList = [
                     multiple: false,
                     value: 'id',
                     children: 'childList',
+                    emitPath: true,
                     label: 'nodeName',
                     checkStrictly: true
                 },
@@ -278,8 +372,40 @@ const componentsList = [
                 }
             },
             {
+                renderType: "picker",
+                components: 'el-time-picker',
+                title: '时间选择器',
+                isHide: false,
+                colSpan: 12,
+                vModel: "vModel",
+                rules: {
+                    isValidate: false,
+                    validateTitle: '',
+                    validateType: 'change'
+                },
+                vModelType: 'fixed',
+                placeholder: "请选择时间",
+                disabled: false,
+                clearable: false,
+                size: "-",
+                startPlaceholder: "-",
+                endPlaceholder: "-",
+                readonly: false,
+                valueFormat: "HH:mm:ss",
+                isRange: false,
+                arrowControl: false,
+                align: 'left',
+                pickerOptions: {},
+                events: {
+                    change: "",
+                    blur: "",
+                    focus: "",
+                    disabledCode: "",
+                }
+            },
+            {
                 components: 'el-date-picker',
-                title: '日期时间选择器',
+                title: '日期选择器',
                 isHide: false,
                 colSpan: 12,
                 vModel: "vModel",
@@ -303,7 +429,7 @@ const componentsList = [
             },
             {
                 components: "el-radio",
-                title: "Radio单选框",
+                title: "单选框",
                 isHide: false,
                 colSpan: 12,
                 vModel: "vModel",
@@ -335,7 +461,7 @@ const componentsList = [
             },
             {
                 components: "el-checkbox",
-                title: "CheckBox多选",
+                title: "多选框",
                 isHide: false,
                 colSpan: 12,
                 vModel: "vModel",
@@ -459,6 +585,7 @@ const componentsList = [
                 title: "基础表格",
                 height: 30,
                 isExpand: false,
+                showHeader: true,
                 colSpan: 24,
                 tableData: [],
                 tableColumns: [
@@ -502,9 +629,11 @@ const componentsList = [
                 title: "树形表格",
                 height: 30,
                 colSpan: 24,
+                showHeader: true,
                 rowKey: 'id',
                 treeProps: '{"children":"children"}',
                 tableData: [],
+                tableSelectData: [],
                 tableColumns: [
                     {
                         label: "列1",
@@ -690,20 +819,26 @@ const componentsList = [
                 title: "分类上传组件",
                 isHide: false,
                 colSpan: 24,
-                typeList: [
-                    {
-                        label: '普通附件',
-                        value: '普通附件'
-                    },
-                ],
-                selectType: '普通附件',
+                typeDataSource: "",
+                disabled: false,
+                typeProp: "fileType",
+                typeList: [],
+                selectType: '',
                 fileList: [],
                 actionList: [
                     {
                         label: '查看',
                         statusEvents: '',
-                        clickEvents: ''
-                    }
+                        clickEvents: "let fileInfo = scope.row; window.location.href = window.globalEnv.VUE_APP_BASE_API + '/common/uploadFileDownload?fileName=' + fileInfo.fileName + '&filePath=' + fileInfo.filePath + '&Authorization=' + getToken() + '&MenuId=' + localStorage.getItem('menuId'); "
+                    }, {
+                        label: '删除',
+                        statusEvents: '',
+                        clickEvents: "ctx.$confirm('确定删除该行的附件？').then(() => { widgetInfo.fileList.splice(scope.$index, 1); }); "
+                    }, {
+                        label: '下载',
+                        statusEvents: '',
+                        clickEvents: "let fileInfo = scope.row; window.location.href = window.globalEnv.VUE_APP_BASE_API + '/common/uploadFileDownload?fileName=' + fileInfo.fileName + '&filePath=' + fileInfo.filePath + '&Authorization=' + getToken() + '&MenuId=' + localStorage.getItem('menuId');  "
+                    },
                 ],
                 options: {
                     action: "/common/upload",
@@ -743,14 +878,141 @@ const componentsList = [
                     ]
                 },
 
+            }, {
+                components: "kevin-verificationPlan-module",
+                describe: "检定校准执行模板，数据沿用设备验收计量验收数据",
+                title: "检定校准模板",
+                isHide: false,
+                colSpan: 24,
+                options: {
+                    canEditAccept: true,//是否处于验收意外的地方
+                    disabled: true,//采购时整体不让编辑
+                    dataSource: {
+                        executionMethod: 'auto',
+                        list: [],//此处需要注意 需增加 每一个单元 是否允许编辑的标记
+                        allAcceptResult: [
+                            {
+                                label: '通过',
+                                value: '1'
+                            }, {
+                                label: '不通过',
+                                value: '0'
+                            }
+                        ],
+
+                    },
+                    autoEvents: [
+                        {
+                            title: '确定当前显示哪个验收类型',
+                            events: "_this.tableColumns = _this.widgetOptions.dataSource.list[0].content.tableColumns; _this.tableData = _this.widgetOptions.dataSource.list[0].content.tableData; _this.tableActions = _this.widgetOptions.dataSource.list[0].content.tableActions; "
+                        }
+                    ]
+                },
+            },
+            {
+                components: "kevin_equipment_calibration_confirm",
+                title: "校准确认模板",
+                isHide: false,
+                colSpan: 24,
+                options: {
+                    dataSource: {
+                        list: [{
+                            "code": "METROLOGY_ACCEPTANCE",
+                            "form": {
+                                "inspectDate": "",
+                                "inspectReason": "",
+                                "inspectResult": "",
+                                "inspectUserId": "",
+                                "inspectUserName": ""
+                            },
+                            "type": "计量验收",
+                            "content": {
+                                "title": "校准确认业务表格",
+                                "height": 30,
+                                "colSpan": 24,
+                                "WIDGETID": "",
+                                "tableData": [],
+                                "components": "kevin-accept-table",
+                                "tableActions": [
+                                    {
+                                        "title": "移除",
+                                        "events": "_this.$confirm('确定移除该行?').then(() => { widgetInfo.tableData.splice(scope.$index,1) })",
+                                        "isHide": false
+                                    }
+                                ],
+                                "tableColumns": [
+                                    {
+                                        "prop": "acceptanceCriteria",
+                                        "label": "校准要求",
+                                        "checked": true,
+                                        "slotName": "acceptanceCriteria",
+                                        "vModelType": "fixed",
+                                        "vModelActionType": "input",
+                                        "canEditCellFormType": false,
+                                        "vModelActionOptions": {
+                                            "disabled": false
+                                        }
+                                    },
+                                    {
+                                        "prop": "acceptanceStatus",
+                                        "label": "校准确认情况",
+                                        "checked": true,
+                                        "slotName": "acceptanceStatus",
+                                        "vModelType": "fixed",
+                                        "vModelActionType": "input",
+                                        "canEditCellFormType": true,
+                                        "vModelActionOptions": {
+                                            "disabled": true
+                                        }
+                                    },
+                                    {
+                                        "prop": "action",
+                                        "type": "action",
+                                        "fixed": "right",
+                                        "label": "操作",
+                                        "checked": true,
+                                        "slotName": "action"
+                                    }
+                                ],
+                                "tableSelectData": []
+                            }
+                        }],//此处需要注意 需增加 每一个单元 是否允许编辑的标记
+                        allAcceptResult: [
+                            {
+                                label: '通过',
+                                value: '1'
+                            }, {
+                                label: '不通过',
+                                value: '0'
+                            }
+                        ],
+                    }
+                }
+            },
+            {
+                components: "kevin_equipment_chart",
+                title: "设备信息图表",
+                isHide: false,
+                height: 30,
+                colSpan: 24,
+                lazy: false,
+                data: [],
+                total: 0,
+                events: {
+                    changeStatus: "",
+                    handleStatusColor: "if (status == 1) { return 'green' } else if (status == 2) { return 'red' } else if (status == 5) { return '#ccc' } else { return 'yellow' }",
+                    handleStatusLabel: "",
+                    load: "",
+                }
             }
         ]
-    }, {
-        title: '图表组件（ECharts版）规划中。。。。。',
-        list: []
-    }, {
-        title: '图表组件（Ant版）规划中。。。。。',
-        list: []
     },
+    // {
+    //     title: '图表组件（ECharts版）规划中。。。。。',
+    //     list: []
+    // }, {
+    //     title: '图表组件（Ant版）规划中。。。。。',
+    //     list: []
+    // },
 ]
 export default componentsList

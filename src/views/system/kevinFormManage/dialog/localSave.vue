@@ -1,7 +1,7 @@
 <template>
     <div class="kevin_drawer">
         <el-drawer :visible.sync="showDrawer" close-on-press-escape destroy-on-close :show-close="false" @close="e_close"
-            :wrapperClosable="false" size="30%" custom-class="customerdraw" direction="ltr">
+            :wrapperClosable="false" size="60%" custom-class="customerdraw" direction="ltr">
             <div slot="title" class="kevin_drawer_head" ref="kevin_drawer_head">
                 <span class="drawertitle">推送远程</span>
                 <div class="kevin_top_buttons">
@@ -20,7 +20,14 @@
                     <el-tree :data="projectModuleList" :props="defaultProps" @node-click="e_selProjectModule"
                         :highlight-current="true" :default-expand-all="true" icon-class="el-icon-menu"></el-tree>
                 </div>
-
+                <div class="k_d_b_right">
+                    <el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                        <el-form-item label="推送备注" prop="reason"
+                            :rules="[{ required: true, message: '请输入推送备注', trigger: 'blur' }]">
+                            <el-input type="textarea" autosize rows="10" v-model="ruleForm.reason"></el-input>
+                        </el-form-item>
+                    </el-form>
+                </div>
             </div>
         </el-drawer>
     </div>
@@ -37,6 +44,9 @@ export default {
     },
     data() {
         return {
+            ruleForm: {
+                reason: ""
+            },
             showDrawer: false,
             KevinDrawerBodyHeight: 0,
             treeList: [],
@@ -58,27 +68,41 @@ export default {
     },
     methods: {
         e_save() {
-            this.$confirm('确定执行提交保存,已存在的表单将被覆盖').then(async () => {
-                await this.getLowCodeForm()
-                this.saveLocalInfo.projectId = this.selProjectId
-                this.saveLocalInfo.projectModuleId = this.selProjectModuleId
-                axios.post(this.localSaveHost + '/admin/boshland/projectForm/saveProjectForm', this.saveLocalInfo, {
-                    headers: {
-                        'Authorization': sessionStorage.getItem('localAccountToken'), // 添加Authorization头，替换为实际的令牌
+            this.$refs.ruleForm.validate(v => {
+                if (v) {
+                    if(!this.selProjectId){
+                        this.$message.error('请选择项目')
+                        return
                     }
-                }).then(re => {
-                    console.log('re', re)
-                    if (re.data.code == 1000) {
-                        this.$message.success('提交保存成功')
-                        this.$emit('saveSuccess')
+                    if(!this.selProjectModuleId){
+                        this.$message.error('请选择功能模块')
+                        return
                     }
+                    this.$confirm('确定执行提交保存,已存在的表单将被覆盖').then(async () => {
+                        await this.getLowCodeForm()
+                        this.saveLocalInfo.projectId = this.selProjectId
+                        this.saveLocalInfo.projectModuleId = this.selProjectModuleId
+                        this.saveLocalInfo.reason = this.ruleForm.reason
+                        axios.post(this.localSaveHost + '/admin/boshland/projectForm/saveProjectForm', this.saveLocalInfo, {
+                            headers: {
+                                'Authorization': sessionStorage.getItem('localAccountToken'), // 添加Authorization头，替换为实际的令牌
+                            }
+                        }).then(re => {
+                            console.log('re', re)
+                            if (re.data.code == 1000) {
+                                this.$message.success('提交保存成功')
+                                this.$emit('saveSuccess')
+                            }
 
-                }).catch(error => {
-                    sessionStorage.removeItem('localAccountToken')
-                    this.$message.error('授权账户登录失效')
-                    this.$emit('localLogin')
-                })
+                        }).catch(error => {
+                            sessionStorage.removeItem('localAccountToken')
+                            this.$message.error('授权账户登录失效')
+                            this.$emit('localLogin')
+                        })
+                    })
+                }
             })
+
         },
         e_selProjectModule(data) {
             this.selProjectModuleId = data.id
@@ -183,7 +207,7 @@ export default {
         align-items: center;
 
         .k_d_b_left {
-            width: 49%;
+            width: 25%;
             height: 100%;
             background-color: #fff;
             border-radius: 10px;
@@ -201,7 +225,7 @@ export default {
         }
 
         .k_d_b_center {
-            flex: 1;
+            width: 25%;
             height: 100%;
             background-color: #fff;
             border-radius: 10px;

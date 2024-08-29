@@ -1,4 +1,4 @@
-import {net} from '@/api/jiaozhengRequest'
+import { net } from '@/api/jiaozhengRequest'
 import themeList from '../theme/index'
 
 const system = {
@@ -8,14 +8,14 @@ const system = {
             logoPath: 'aaa',
             title: 'LIMS管理系统',
             extData: {
-                icoName:'',
-                onlineOfficeServer:"http://192.168.36.59:9980",
+                icoName: '',
+                onlineOfficeServer: "",
                 nameColor: '#000000',
             }
         },
         themeList: themeList,
-        defaultTheme:'',
-        themeTypeName:'envKevin'
+        defaultTheme: '',
+        themeTypeName: 'envKevin'
     },
     mutations: {
         set_systemInfo(state, info) {
@@ -24,34 +24,43 @@ const system = {
         set_themeList(state, list) {
             state.themeList = list
         },
-        set_defaultTheme(state,name){
+        set_defaultTheme(state, name) {
             state.defaultTheme = name
         },
-        set_themeTypeName(state,name){
+        set_themeTypeName(state, name) {
             state.themeTypeName = name
         }
     },
     actions: {
-        getSystemInfo({commit}) {
+        getSystemInfo({ commit }) {
+            let localInfo = localStorage.getItem('systemInfo')
+            if (localInfo) {
+                let localData = JSON.parse(localInfo)
+                console.log('主题配置信息',localData)                
+                commit('set_systemInfo', localData)
+                commit('set_themeTypeName', localData.extData.themeTypeName || 'envKevin')
+                document.title = localData.title
+            }
             net('/v1/theme/queryProjectInfo', 'get').then(re => {
                 if (re.code == 200 && re.data) {
                     commit('set_systemInfo', re.data)
                     commit('set_themeTypeName', re.data.extData.themeTypeName || 'envKevin')
+                    localStorage.setItem('systemInfo', JSON.stringify(re.data))
                     document.title = re.data.title
                 }
 
             })
         },
-        async getSystemThem({commit}) {
+        async getSystemThem({ commit }) {
             let re = await net('/v1/theme/queryThemeSkinList', 'get')
-            if(re.code == 200) {
+            if (re.code == 200) {
                 if (re.data && re.data.length != 0) {
                     let list = re.data.filter(item => {
                         return item.hasDefault == true
                     })
-                    if(list.length!=0){
+                    if (list.length != 0) {
                         commit('set_defaultTheme', list[0].themeSkin)
-                    }else{
+                    } else {
                         commit('set_defaultTheme', themeList[0])
                     }
 

@@ -154,6 +154,7 @@ export default {
 <style lang="scss" scoped>
 .header-search {
   font-size: 0 !important;
+  margin-top: 0.65rem;
 
   .search-icon {
     cursor: pointer;

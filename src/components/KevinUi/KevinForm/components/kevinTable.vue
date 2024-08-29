@@ -5,7 +5,8 @@
       <el-table-column v-for="(item, index) in checkedCol" :key="item.prop" v-bind="item" :index="index"
         :column-key="item.prop" :align="item.align ? item.align : 'center'" :width="item.width ? item.width : '-'"
         :show-overflow-tooltip="item.showOverFlowToolTip ? item.showOverFlowToolTip : false"
-        :type="item.type ? item.type : ''">
+        :type="item.type ? item.type : ''"
+        :render-header="item.handleHeader ? (h, obj) => funHandleHeaderCode(h, obj, item.handleHeaderCode) : (h, obj) => defaultHeader(h, obj)">
         <template v-if="item.slotHeaderName" v-slot:header="scope">
           <slot :name="item.slotHeaderName" v-bind="scope" :item="item"></slot>
         </template>
@@ -22,6 +23,8 @@ import Sortable from "sortablejs";
 export default {
   name: "ml-table",
   props: {
+    context: Object,
+    widgetInfo: Object,
     tableKey: String,
     columns: {
       type: Array,
@@ -103,6 +106,18 @@ export default {
     //   });
   },
   methods: {
+    defaultHeader(h, { column, $index }) {
+      return h(
+        'div', [
+        // 列名称
+        h('span', column.label),
+      ],
+      )
+    },
+    funHandleHeaderCode(h, { column, $index }, code) {
+      const dynamicFunction = new Function('ctx', '_this', 'widgetInfo', 'h', 'column', '$index', code)(this.context, this.context.$refs.KevinRender, this.widgetInfo, h, column, $index);
+      return dynamicFunction
+    },
     //   getRowClass(row) {
     //   let data = row.row;
     //   let res = [];

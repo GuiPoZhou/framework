@@ -27,6 +27,8 @@ import RightToolbar from '@/components/RightToolbar'
 import Editor from '@/components/Editor'
 // 文件上传组件
 import FileUpload from '@/components/FileUpload'
+// 模板文件上传组件
+import FileUploadTp from '@/components/FileUploadTp'
 // 图片上传组件
 import ImageUpload from '@/components/ImageUpload'
 // 图片预览组件
@@ -37,11 +39,17 @@ import DictTag from '@/components/DictTag'
 import VueMeta from 'vue-meta'
 // 字典数据组件
 import DictData from '@/components/DictData'
-import { scrollBoard } from '@jiaminghi/data-view'
+// import { scrollBoard } from '@jiaminghi/data-view'
+import dataV from '@jiaminghi/data-view'
 // 时间插件
 import moment from "moment";
 
-Vue.use(scrollBoard)
+// Vue.use(scrollBoard)
+Vue.use(dataV)
+
+import CodeDiff from 'v-code-diff'
+
+Vue.use(CodeDiff)
 // 全局方法挂载
 Vue.prototype.$BASE_API = window.globalEnv.VUE_APP_BASE_API
 Vue.prototype.getDicts = getDicts
@@ -55,6 +63,7 @@ Vue.prototype.download = download
 Vue.prototype.downloadNew = downloadNew
 Vue.prototype.handleTree = handleTree
 Vue.prototype.moment = moment
+// import KevinRender from '@/components/KevinUi/KevinForm/kevinRender'
 
 // 全局组件挂载
 Vue.component('DictTag', DictTag)
@@ -62,8 +71,10 @@ Vue.component('Pagination', Pagination)
 Vue.component('RightToolbar', RightToolbar)
 Vue.component('Editor', Editor)
 Vue.component('FileUpload', FileUpload)
+Vue.component('file-uploadTp', FileUploadTp)
 Vue.component('ImageUpload', ImageUpload)
 Vue.component('ImagePreview', ImagePreview)
+// Vue.component('KevinLogRender', KevinRender)
 
 Vue.use(directive)
 Vue.use(plugins)
@@ -81,23 +92,23 @@ Vue.component('BoContainer', BoContainer)
 Vue.component('BoMain', BoMain)
 Vue.component('BoDialog', BoDialog)
 
-import {net} from '@/api/jiaozhengRequest'
+import { net } from '@/api/jiaozhengRequest'
 Vue.prototype.$net = net
 
 
+import KevinEngine from 'kevin-engine'
+import 'kevin-engine/kevin-engine.css'
+Vue.use(KevinEngine)
 
-// import MasterBanUi from '/Users/jiaozheng/Desktop/MyProject/masterban-ui/masterban-ui'
-// import "/Users/jiaozheng/Desktop/MyProject/masterban-ui/masterban-ui/masterban-ui.css"
+// import KevinRender from '/Users/jiaozheng/Desktop/BoshlandMicro/kevin_lowcode/low_code_rendering_engine/src/package/kevinRender/index'
+// Vue.component('KevinRender', KevinRender)
 
-// import MasterBanUi from 'masterban-ui'
-// import "masterban-ui/masterban-ui.css"
-// Vue.use(MasterBanUi)
 
-import MasterBanUi from  '@/components/MasterBanUi/index'
+import MasterBanUi from '@/components/MasterBanUi/index'
 Vue.use(MasterBanUi)
-import { registerMicroApps,loadMicroApp, start,setDefaultMountApp } from 'qiankun';
+import { registerMicroApps, loadMicroApp, start, setDefaultMountApp } from 'qiankun';
 window.loadMicroApp = loadMicroApp
-import {checkPermi} from "@/utils/permission";
+import { checkPermi } from "@/utils/permission";
 Vue.prototype.$checkPermi = checkPermi
 /**
 * @author Coder
@@ -105,7 +116,16 @@ Vue.prototype.$checkPermi = checkPermi
 * @des register micro apps to zhe pedestal
 */
 import MicroApps from './microConfig'
-registerMicroApps(MicroApps);
+let loadMicroList = []
+if (window.globalEnv.LOAD_MICRO_LIST && Object.prototype.toString.call(window.globalEnv.LOAD_MICRO_LIST) == '[object Array]' && window.globalEnv.LOAD_MICRO_LIST.length != 0) {
+  loadMicroList = MicroApps.filter(item => {
+    return window.globalEnv.LOAD_MICRO_LIST.indexOf(item.name) != -1
+  })
+  console.log('loadMicroList', loadMicroList)
+} else {
+  loadMicroList = MicroApps
+}
+registerMicroApps(loadMicroList);
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size

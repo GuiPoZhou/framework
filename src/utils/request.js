@@ -57,7 +57,7 @@ service.interceptors.request.use(config => {
       if (s_data === requestObj.data && requestObj.time - s_time < interval && s_url === requestObj.url) {
         const message = '数据正在处理，请勿重复提交';
         console.warn(`[${s_url}]: ` + message)
-        return Promise.reject(new Error(message))
+        return Promise.reject()
       } else {
         cache.session.setJSON('sessionObj', requestObj)
       }
@@ -90,7 +90,7 @@ service.interceptors.response.use(res => {
       ).then(() => {
         isRelogin.show = false;
         store.dispatch('LogOut').then(() => {
-          location.href = '/index';
+          location.href = '/login';
         })
       }).catch(() => {
         isRelogin.show = false;
@@ -127,7 +127,7 @@ service.interceptors.response.use(res => {
         type: 'error'
       })
       localStorage.clear()
-      location.href ='/index';
+      location.href ='/login';
     }else{
       if (message == "Network Error") {
         message = "后端接口连接异常";

@@ -1,6 +1,6 @@
 <template>
     <div class="kevin_upload_device">
-        <div class="k_u_d_top" style="margin-bottom: 0.7rem;">
+        <div class="k_u_d_top" style="margin-bottom: 0.7rem;" v-if="!disabled">
             <el-select v-model="selectType" placeholder="请选择" size="small" style="margin-right: 0.7rem;width: 200px;">
                 <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
@@ -10,7 +10,10 @@
             </el-upload>
         </div>
         <el-table :data="fileList" style="width: 100%" border>
-            <el-table-column prop="fileType" label="附件类型" align="center">
+            <el-table-column :prop="widgetInfo.typeProp" label="附件类型" align="center">
+                <template slot-scope="scope">
+                    <span>{{ handlerType(scope.row[widgetInfo.typeProp]) }}</span>
+                </template>
             </el-table-column>
             <el-table-column prop="fileName" label="附件名称" align="center">
             </el-table-column>
@@ -24,25 +27,31 @@
         </el-table>
     </div>
 </template>
-
 <script>
+// import { getToken } from '@/utils/auth'
+const getToken = ()=>{
+    return localStorage.getItem('Admin-Token')
+}
 export default {
     props: {
-        widgetInfo: Object
+        widgetInfo: Object,
+        context: Object,
+        disabled: {
+            typeof: Boolean,
+            default: false
+        }
     },
     watch: {
         widgetInfo: {
             handler() {
-                this.selectType = this.widgetInfo.selectType
-                this.typeList = this.widgetInfo.typeList
                 this.action = window.globalEnv.VUE_APP_BASE_API + this.widgetInfo.options.action + '?Authorization=' + localStorage.getItem('Admin-Token') + '&MenuId=' + localStorage.getItem('menuId')
                 this.fileList = this.widgetInfo.fileList
                 this.actionList = this.filterActionList(this.widgetInfo.actionList)
+                this.selectType = this.widgetInfo.typeList[0].value
             },
-            immediate: true,
             deep: true
         },
-        context: Object
+
     },
     data() {
         return {
@@ -53,11 +62,33 @@ export default {
             actionList: []
         }
     },
+    mounted() {
+        this.typeList = this.widgetInfo.typeList
+    },
     methods: {
+
+        handlerType(type) {
+            let typeInfo = this.typeList.filter(item => {
+                return item.value == type
+            })
+            if (typeInfo.length != 0) {
+                return typeInfo[0].label
+            } else {
+                return '未知类型，查看是否字典内容丢失或改变'
+            }
+
+        },
         onSuccess(response, file, fileList) {
-            let uploadInfo = file.response
-            uploadInfo.fileType = this.selectType
-            this.$emit('success', uploadInfo)
+            if (file.response.code == 200) {
+                let uploadInfo = file.response
+                uploadInfo[this.widgetInfo.typeProp] = this.selectType
+                uploadInfo.filePath = uploadInfo.url
+                this.$emit('success', uploadInfo)
+            } else {
+                this.$message.error(file.response.msg)
+
+            }
+
         },
         filterActionList(list) {
             if (list && list.length != 0) {

@@ -1,17 +1,27 @@
 <template>
-    <div :class="{'has-logo':showLogo}" :style="{ backgroundColor: settings.sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground,borderTopRightRadius:'10px',borderBottomRightRadius:'10px'}">
+    <div :class="{'has-logo':showLogo}" :style="{ backgroundColor: settings.sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground,borderBottomRightRadius:'10px'}">
         <logo v-if="showLogo" :collapse="isCollapse" />
         <el-scrollbar :class="settings.sideTheme" wrap-class="scrollbar-wrapper">
-            <el-menu
-                :default-active="activeMenu"
-                :collapse="isCollapse"
-                :background-color="settings.sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground"
-                :text-color="settings.sideTheme === 'theme-dark' ? variables.menuColor : variables.menuLightColor"
-                :unique-opened="true"
-                :active-text-color="settings.theme"
-                :collapse-transition="false"
-                mode="vertical"
-            >
+<!--            <el-menu-->
+<!--                :default-active="activeMenu"-->
+<!--                :collapse="isCollapse"-->
+<!--                :background-color="settings.sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground"-->
+<!--                :text-color="settings.sideTheme === 'theme-dark' ? variables.menuColor : variables.menuLightColor"-->
+<!--                :unique-opened="true"-->
+<!--                :active-text-color="settings.theme"-->
+<!--                :collapse-transition="false"-->
+<!--                mode="vertical"-->
+<!--            >-->
+                <el-menu
+                    :default-active="activeMenu"
+                    :collapse="isCollapse"
+                    :background-color="$store.state.system.systemInfo.extData.navBgColor ? $store.state.system.systemInfo.extData.navBgColor : '#0e1438'"
+                    :text-color="$store.state.system.systemInfo.extData.navFontColor ? $store.state.system.systemInfo.extData.navFontColor : variables.menuColor"
+                    :unique-opened="true"
+                    :active-text-color="'red'"
+                    :collapse-transition="false"
+                    mode="vertical"
+                >
                 <sidebar-item
                     v-for="(route, index) in sidebarRouters"
                     :key="route.path  + index"
@@ -57,6 +67,11 @@ export default {
         isCollapse() {
             return !this.sidebar.opened;
         }
+    },
+    mounted() {
+    },
+    methods:{
+        
     }
 };
 </script>

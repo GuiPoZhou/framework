@@ -10,10 +10,13 @@ const getters = {
   introduction: state => state.user.introduction,
   roles: state => state.user.roles,
   permissions: state => state.user.permissions,
+  socket: state => state.user.socket,
+  speechQueue: state => state.user.speechQueue,
+  voiceSocket: state => state.user.voiceSocket,
   permission_routes: state => state.permission.routes,
   topbarRouters:state => state.permission.topbarRouters,
   defaultRoutes:state => state.permission.defaultRoutes,
   sidebarRouters:state => state.permission.sidebarRouters,
-  lang:state=>state.boshland.lang
+  lang:state=>state.boshland.lang,
 }
 export default getters

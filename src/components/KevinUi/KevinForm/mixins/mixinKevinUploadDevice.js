@@ -1,8 +1,15 @@
+// import { getToken } from '@/utils/auth'
+const getToken = ()=>{
+    return localStorage.getItem('Admin-Token')
+}
 export default {
     methods: {
         renderKevinUploadDevice(widgetInfo, widgetIndex) {
             if (widgetInfo.isHide == true) {
                 return ('')
+            }
+            if (!widgetInfo.typeProp) {
+                widgetInfo.typeProp = 'fileType'
             }
             return (
                 <el-col class={this.draggableOpen ? 'RenderCol' : ''} key={widgetIndex} span={widgetInfo.colSpan}>
@@ -10,6 +17,8 @@ export default {
                         this.showEditEnterNode(widgetIndex, widgetInfo)
                     }
                     <kevinUploadDevice
+                        key={widgetInfo.WIDGETID}
+                        disabled={widgetInfo.disabled}
                         context={this.context}
                         widgetInfo={widgetInfo}
                         onSuccess={(uploadInfo) => {
@@ -23,10 +32,11 @@ export default {
             )
         },
         kevinUploadDeviceSuccess(uploadInfo, widgetInfo) {
+            console.log('uploadInfo', uploadInfo)
             widgetInfo.fileList.push(uploadInfo)
         },
         kevinUploadDeviceTableActionClick(actionButtonInfo, scope, widgetInfo) {
-            new Function('ctx', '_this', 'scope', 'widgetInfo', actionButtonInfo.clickEvents)(this.context, this, scope, widgetInfo)
+            new Function('ctx', '_this', 'scope', 'widgetInfo', 'getToken', actionButtonInfo.clickEvents)(this.context, this, scope, widgetInfo, getToken)
         },
 
     }

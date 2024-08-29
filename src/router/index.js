@@ -42,10 +42,15 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/auth',
+    component: () => import('@/views/login'),
+    hidden: true
+  },
+  {
     path: '/login',
     component: () => import('@/views/Login/login'),
     hidden: true
-  },{
+  }, {
     path: '/dataScreen',
     component: () => import('@/views/dataScreen/index'),
     hidden: true

@@ -6,7 +6,7 @@ function resolve(dir) {
 }
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
-const CompressionPlugin = require('compression-webpack-plugin')
+// const CompressionPlugin = require('compression-webpack-plugin')
 
 const name = process.env.VUE_APP_TITLE || '若依管理系统' // 网页标题
 
@@ -33,7 +33,7 @@ module.exports = {
     host: '0.0.0.0',
     // port: port,
     port: '8759',
-    open: true,
+    open: false,
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
         target: 'http://192.168.36.59:8082',
@@ -64,13 +64,6 @@ module.exports = {
         // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
         languages: ['javascript', 'css', 'html', 'typescript', 'json', 'java', 'sql']
       }),
-      // http://doc.ruoyi.vip/ruoyi-vue/other/faq.html#使用gzip解压缩静态文件
-      new CompressionPlugin({
-        test: /\.(js|css|html)?$/i,     // 压缩文件格式
-        filename: '[path].gz[query]',   // 压缩后的文件名
-        algorithm: 'gzip',              // 使用gzip压缩
-        minRatio: 0.8                   // 压缩率小于1才会压缩
-      })
     ],
   },
   chainWebpack(config) {

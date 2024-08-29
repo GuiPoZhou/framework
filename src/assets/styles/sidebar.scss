@@ -13,7 +13,7 @@
     width: $base-sidebar-width !important;
     height: 100%;
     position: fixed;
-    font-size: 0px;
+    //font-size: 0px;
     top: 0;
     bottom: 0;
     left: 0;
@@ -75,12 +75,13 @@
     .submenu-title-noDropdown,
     .el-submenu__title {
       &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
+        background-color: var(--my-menuActiveColor) !important;
+        color: #fff !important;
       }
     }
 
     & .theme-dark .is-active > .el-submenu__title {
-      color: $base-menu-color-active !important;
+      //color: $base-menu-color-active !important;
     }
 
     & .nest-menu .el-submenu>.el-submenu__title,
@@ -88,7 +89,7 @@
       min-width: $base-sidebar-width !important;
 
       &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
+        background-color: var(--my-navBgColor) !important;
       }
     }
 
@@ -197,7 +198,7 @@
   .el-menu-item {
     &:hover {
       // you can use $subMenuHover
-      background-color: rgba(0, 0, 0, 0.06) !important;
+      background-color: var(--my-navBgColor) !important;
     }
   }
 

@@ -71,10 +71,10 @@ export default {
             if (this.draggableOpen) {
                 return (
                     <div class="eidt_area">
-                        <el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
+                        {/* <el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
                             onClick={() => {
                                 this.copyWidgetId()
-                            }}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag>
+                            }}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag> */}
                         <el-button type="text" onClick={() => {
                             this.addNewTab(params)
                         }}>新增Tab

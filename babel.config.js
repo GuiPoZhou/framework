@@ -7,6 +7,7 @@ module.exports = {
         'injectH': false
       }]
   ],
+  plugins:['vue-jsx-sync'],
   'env': {
     'development': {
       // babel-plugin-dynamic-import-node plugin only does one thing by converting all import() to require().

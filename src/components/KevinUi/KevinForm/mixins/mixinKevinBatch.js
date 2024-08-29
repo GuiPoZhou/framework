@@ -15,6 +15,7 @@ export default {
                                 <kevinBatch
                                     interval={this.form[widgetInfo.options.intervalKey]}
                                     unit={this.form[widgetInfo.options.unitKey]}
+                                    disabled={widgetInfo.disabled}
                                     count={Number(this.form[widgetInfo.options.intervalCountKey])}
                                     editButtonTile={widgetInfo.editButtonTile}
                                     actionLabel={widgetInfo.actionLabel}
@@ -27,6 +28,7 @@ export default {
                             </el-form-item> : <el-form-item label={widgetInfo.title}>
                                 <kevinBatch
                                     interval={this.form.extData[widgetInfo.options.intervalKey]}
+                                    disabled={widgetInfo.disabled}
                                     unit={this.form.extData[widgetInfo.options.unitKey]}
                                     count={this.form.extData[widgetInfo.options.intervalCountKey]}
                                     editButtonTile={widgetInfo.editButtonTile}

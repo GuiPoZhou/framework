@@ -1,108 +1,169 @@
 <template>
-    <widgetEditContainer>
-        <el-form slot="wecLeft" :model="editParams" ref="editParams" label-width="130px" class="demo-ruleForm">
-            <el-col :span="12">
-                <el-form-item label="占据的列数" prop="colSpan">
-                    <el-input-number v-model="editParams.colSpan" :min="4" :max="24"></el-input-number>
-                </el-form-item>
-            </el-col>
-            <el-col :span="24">
-                <el-table :data="editParams.options.autoEvents" style="width: 100%" border>
-                    <el-table-column prop="title" label="名称" align="center">
-                        <template slot-scope="scope">
-                            <el-input v-model="scope.row.title"></el-input>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="事件编辑" align="center">
-                        <template slot-scope="scope">
-                            <el-button type="text" @click="e_editAutoEvents(scope)">编辑</el-button>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="操作" align="center">
-                        <template slot-scope="scope">
-                            <el-button type="text" @click="e_delete(scope.$index)">删除</el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </el-col>
-        </el-form>
-        <KevinEditors slot="wecRight" ref="KevinEditors" @input="handleEditorInput" />
-
-    </widgetEditContainer>
+  <widgetEditContainer>
+    <el-form
+      slot="wecLeft"
+      :model="editParams"
+      ref="editParams"
+      label-width="130px"
+      label-position="top"
+      class="demo-ruleForm"
+    >
+      <el-col :span="12">
+        <el-form-item label="占据的列数" prop="colSpan">
+          <el-input-number
+            v-model="editParams.colSpan"
+            :min="4"
+            :max="24"
+          ></el-input-number>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="是否禁用" prop="disabled">
+          <el-select v-model="editParams.disabled">
+            <el-option label="是" :value="true"></el-option>
+            <el-option label="否" :value="false"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="可以新增模板的业务" prop="canEditType">
+          <el-input
+            v-model="editParams.canEditType"
+            @blur="e_handleEmpty"
+          ></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="24">
+        <el-button
+          size="mini"
+          type="primary"
+          style="margin-bottom: 0.7rem"
+          @click="e_addAutoEvents"
+          >新增</el-button
+        >
+        <el-table
+          :data="editParams.options.autoEvents"
+          style="width: 100%"
+          border
+        >
+          <el-table-column prop="title" label="名称" align="center">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.title"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="事件编辑" align="center">
+            <template slot-scope="scope">
+              <el-button type="text" @click="e_editAutoEvents(scope)"
+                >编辑</el-button
+              >
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button type="text" @click="e_delete(scope.$index)"
+                >删除</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-col>
+    </el-form>
+    <KevinEditors
+      slot="wecRight"
+      ref="KevinEditors"
+      @input="handleEditorInput"
+    />
+  </widgetEditContainer>
 </template>
 
 <script>
-import KevinEditors from '../../../../../../KevinEditor/index'
-import widgetEditContainer from '../components/widgetEditContainer.vue'
+import KevinEditors from "../../../../../../KevinEditor/index";
+import widgetEditContainer from "../components/widgetEditContainer.vue";
 
 export default {
-    components: {
-        KevinEditors,
-        widgetEditContainer
+  components: {
+    KevinEditors,
+    widgetEditContainer,
+  },
+  data() {
+    return {
+      editParams: {
+        options: {},
+      },
+      editType: "",
+      editIndex: -1,
+    };
+  },
+  methods: {
+    e_handleEmpty() {
+      this.editParams.canEditType = this.editParams.canEditType.replace(
+        /\s/g,
+        ""
+      );
     },
-    data() {
-        return {
-            editParams: {
-                options: {
-
-                }
-            },
-            editType: '',
-            editIndex: -1
-        }
+    e_addAutoEvents() {
+      let params = {
+        title: "新增事件",
+        events: "console.log('验收组件自动执行事件')",
+      };
+      this.editParams.options.autoEvents.push(params);
     },
-    methods: {
-        e_editAutoEvents(scope) {
-            this.editIndex = scope.$index
-            this.editType = 'autoEvents'
-            this.$refs.KevinEditors.changeEditor({ value: scope.row.events });
-        },
-        e_delete(index) {
-            this.$confirm('确定删除该脚本事件').then(() => {
-                this.editParams.options.autoEvents.splice(index, 1)
-            })
-        },
-        handleEditorInput(code) {
-            if (this.editType == 'autoEvents') {
-                this.editParams.options.autoEvents[this.editIndex].events = this.formatCode(code)
-            }
-        },
-        formatCode(code) {
-            // 去除开头和结尾的空白字符
-            code = code.trim();
+    e_selectisCustomerShow() {
+      if (this.editParams.isCustomShow && !this.editParams.businessType) {
+        this.editParams.businessType =
+          '["ARRIVAL_ACCEPTANCE","FUNCTIONAL_ACCEPTANCE","SAFETY_ACCEPTANCE","METROLOGY_ACCEPTANCE"]';
+      }
+    },
+    e_editAutoEvents(scope) {
+      this.editIndex = scope.$index;
+      this.editType = "autoEvents";
+      this.$refs.KevinEditors.changeEditor({ value: scope.row.events });
+    },
+    e_delete(index) {
+      this.$confirm("确定删除该脚本事件").then(() => {
+        this.editParams.options.autoEvents.splice(index, 1);
+      });
+    },
+    handleEditorInput(code) {
+      if (this.editType == "autoEvents") {
+        this.editParams.options.autoEvents[this.editIndex].events =
+          this.formatCode(code);
+      }
+    },
+    formatCode(code) {
+      // 去除开头和结尾的空白字符
+      code = code.trim();
 
-            // 在大括号前后添加空格
-            code = code.replace(/\s*{\s*/g, ' { ').replace(/\s*}\s*/g, ' } ');
+      // 在大括号前后添加空格
+      code = code.replace(/\s*{\s*/g, " { ").replace(/\s*}\s*/g, " } ");
 
-            // 在逗号前后添加空格
-            // code = code.replace(/,(\S)/g, ', $1');
+      // 在逗号前后添加空格
+      // code = code.replace(/,(\S)/g, ', $1');
 
-            // 返回格式化后的代码
-            return code;
-        },
-        e_editButtonEvents() {
-
-            this.$refs.KevinEditors.changeEditor({ value: this.editParams.events });
-
-        },
-        e_save() {
-            this.$refs.editParams.validate(v => {
-                if (v) {
-                    this.$emit('save', this.editParams)
-                }
-            })
-        },
-        e_close() {
-            this.$emit('close')
-        },
-        init(widgetInfo) {
-            this.editParams = widgetInfo
-            if (!this.editParams.isHide) {
-                this.editParams.isHide = false
-            }
+      // 返回格式化后的代码
+      return code;
+    },
+    e_editButtonEvents() {
+      this.$refs.KevinEditors.changeEditor({ value: this.editParams.events });
+    },
+    e_save() {
+      this.$refs.editParams.validate((v) => {
+        if (v) {
+          this.$emit("save", this.editParams);
         }
-    }
-}
+      });
+    },
+    e_close() {
+      this.$emit("close");
+    },
+    init(widgetInfo) {
+      this.editParams = widgetInfo;
+      if (!this.editParams.isHide) {
+        this.editParams.isHide = false;
+      }
+    },
+  },
+};
 </script>
 
 <style></style>

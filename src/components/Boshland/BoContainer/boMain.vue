@@ -204,7 +204,7 @@ export default {
 }
 
 /deep/ .fp-search .el-button--primary {
-    background: #3377ff;
+    /* background: #3377ff; */
 }
 
 /deep/ .fp-search .el-button--medium {

@@ -36,13 +36,45 @@
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
+                                <el-form-item label="返回值的类型" prop="valueType">
+                                    <el-select v-model="slotParams.valueType">
+                                        <el-option label="字符串" value="string"></el-option>
+                                        <el-option label="数组" value="array"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
                                 <el-form-item label="图标类名" prop="icon">
                                     <el-input v-model="slotParams.icon"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
+                        <el-divider content-position="left">显示内容处理</el-divider>
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="内容处理脚本" prop="events.propCode">
+                                    <el-input v-model="slotParams.events.propCode" readonly>
+                                        <el-button slot="append" @click="e_editPropCode">编辑</el-button>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="数组返回值赋值脚本" prop="events.arrayPropCode">
+                                    <el-input v-model="slotParams.events.arrayPropCode" readonly>
+                                        <el-button slot="append" @click="e_editarrayPropCode">编辑</el-button>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
                         <el-divider content-position="left">超链接事件</el-divider>
                         <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="状态脚本事件" prop="events.disabledCode">
+                                    <el-input v-model="slotParams.events.disabledCode" readonly>
+                                        <el-button slot="append" @click="e_editdisabledCode">编辑</el-button>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
                             <el-col :span="12">
                                 <el-form-item label="点击事件" prop="events.click">
                                     <el-input v-model="slotParams.events.click" readonly>
@@ -84,6 +116,19 @@ export default {
         }
     },
     methods: {
+        e_editdisabledCode(){
+            this.editType = 'editDisabledCode'
+            this.$refs.KevinEditors.changeEditor({ value: this.slotParams.events.disabledCode || 'return false' });
+        },
+        e_editarrayPropCode() {
+            this.editType = 'editArrayPropCode'
+            this.$refs.KevinEditors.changeEditor({ value: this.slotParams.events.arrayPropCode || "return slotLinkInfo.label" });
+
+        },
+        e_editPropCode() {
+            this.editType = 'editPropCode'
+            this.$refs.KevinEditors.changeEditor({ value: this.slotParams.events.propCode || "if (columnInfo.vModelType == 'fixed') { return scope.row[columnInfo['prop']]; } else { return scope.row.extData[columnInfo['prop']]; } " });
+        },
         e_editClick() {
             this.editType = 'editClick'
             this.$refs.KevinEditors.changeEditor({ value: this.slotParams.events.click || "console.log('scope',scope)" });
@@ -91,6 +136,13 @@ export default {
         handleEditorInput(code) {
             if (this.editType == 'editClick') {
                 this.$set(this.slotParams.events, 'click', this.formatCode(code))
+            } else if (this.editType == 'editPropCode') {
+                this.$set(this.slotParams.events, 'propCode', this.formatCode(code))
+
+            }else if(this.editType == 'editArrayPropCode'){
+                this.$set(this.slotParams.events, 'arrayPropCode', this.formatCode(code))
+            }else if(this.editType == 'editDisabledCode'){
+                this.slotParams.events.disabledCode = this.formatCode(code)
             }
         },
         formatCode(code) {
@@ -112,7 +164,7 @@ export default {
         init(slotParams) {
             console.log('slotParams', slotParams)
             this.slotParams = JSON.parse(JSON.stringify(slotParams))
-            if(!this.slotParams.events){
+            if (!this.slotParams.events) {
                 this.slotParams.events = {}
             }
             this.showLog = true

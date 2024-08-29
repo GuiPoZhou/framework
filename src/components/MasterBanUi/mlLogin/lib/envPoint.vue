@@ -328,6 +328,14 @@ export default {
         }
     },
     methods: {
+        resetForm() {
+      this.loginForm = {
+        username: "",
+        password: "",
+        rememberMe: false,
+        uuid: "",
+      };
+    },
         e_sliderSuccess() {
             this.status = true
         },

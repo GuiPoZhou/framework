@@ -8,6 +8,7 @@ export default {
             if (widgetInfo.title, this.getStringWidth(widgetInfo.title) > 11) {
                 isLangLabel = true
             }
+            
             return (
                 <el-col class={this.draggableOpen ? 'RenderCol' : ''} key={widgetIndex} span={widgetInfo.colSpan}>
                     {
@@ -15,7 +16,7 @@ export default {
                     }
                     {
                         widgetInfo.vModelType == 'fixed' ?
-                            <el-form-item label={widgetInfo.title} prop={widgetInfo.vModel}
+                            <el-form-item class={this.context.KevinJson.KevinWidget.formlabelPosition != 'top' && isLangLabel ? "foldLabel" : ''} label={widgetInfo.title} prop={widgetInfo.vModel}
                                 rules={this.configFormItemRules(widgetInfo)}
                             >
                                 <el-radio-group disabled={widgetInfo.disabled} v-model={this.form[widgetInfo.vModel]} onInput={(value) => { this.elRadioInputEvents(value, widgetInfo) }}>
@@ -27,7 +28,7 @@ export default {
                                         })
                                     }
                                 </el-radio-group>
-                            </el-form-item> : <el-form-item label={widgetInfo.title} prop={`extData.${widgetInfo.vModel}`}
+                            </el-form-item> : <el-form-item class={this.context.KevinJson.KevinWidget.formlabelPosition != 'top' && isLangLabel ? "foldLabel" : ''} label={widgetInfo.title} prop={`extData.${widgetInfo.vModel}`}
                                 rules={this.configFormItemRules(widgetInfo)}
                             >
                                 <el-radio-group disabled={widgetInfo.disabled} v-model={this.form.extData[widgetInfo.vModel]} onInput={(value) => { this.elRadioInputEvents(value, widgetInfo) }}>

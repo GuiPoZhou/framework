@@ -1,6 +1,5 @@
 export default {
     methods: {
-
         //        渲染ElInput
         renderELInput(widgetInfo, widgetIndex) {
             if (widgetInfo.isHide && !this.draggableOpen) {
@@ -13,23 +12,24 @@ export default {
                 readonly: widgetInfo.readonly,
                 type: widgetInfo.type,
                 rows: widgetInfo.rows || 2,
-                autosize:widgetInfo.autosize
+                autosize: widgetInfo.autosize,
+                size: widgetInfo.size,
             }
             let isLangLabel = false
             if (widgetInfo.title, this.getStringWidth(widgetInfo.title) > 11) {
                 isLangLabel = true
             }
-
             return (
-                <el-col class={this.draggableOpen ? 'RenderCol' : ''} key={widgetIndex} span={widgetInfo.colSpan}>
+                <el-col class={[this.draggableOpen ? 'RenderCol' : '', this.draggableOpen && widgetInfo.isHide ? 'kevinFormHide' : '']} key={widgetIndex} span={widgetInfo.colSpan}>
                     {
+
                         this.showEditEnterNode(widgetIndex, widgetInfo)
                     }
                     {
-                        widgetInfo.vModelType == 'fixed' ? <el-form-item class={this.context.KevinJson.KevinWidget.formlabelPosition !='top'&&isLangLabel ? "foldLabel" : ''} label={widgetInfo.title} prop={widgetInfo.vModel}
+                        widgetInfo.vModelType == 'fixed' ? <el-form-item class={this.context.KevinJson.KevinWidget.formlabelPosition != 'top' && isLangLabel ? "foldLabel" : ''} label={widgetInfo.title} prop={widgetInfo.vModel}
                             rules={this.configFormItemRules(widgetInfo)}
                         >
-                            <el-input v-model={this.form[widgetInfo.vModel]}  {...{ props: ElInputAttr }}
+                            <el-input placeholder={widgetInfo.placeholder} autofocus={this.kevin_input_handleAutoFocus(widgetInfo)} ref={widgetInfo.WIDGETID} v-model={this.form[widgetInfo.vModel]} maxlength={widgetInfo.maxlength || '-'} show-word-limit={widgetInfo.maxlength ? true : false}    {...{ props: ElInputAttr }}
                                 onBlur={($event) => {
                                     this.elInputBlur(widgetInfo, $event)
                                 }}
@@ -53,10 +53,10 @@ export default {
                                     widgetInfo.slot.isSlot ? this.renderElInputSlot(widgetInfo) : ''
                                 }
                             </el-input>
-                        </el-form-item> : <el-form-item class={isLangLabel ? "foldLabel" : ''} label={widgetInfo.title} prop={`extData.${widgetInfo.vModel}`}
+                        </el-form-item> : <el-form-item class={this.context.KevinJson.KevinWidget.formlabelPosition != 'top' && isLangLabel ? "foldLabel" : ''} label={widgetInfo.title} prop={`extData.${widgetInfo.vModel}`}
                             rules={this.configFormItemRules(widgetInfo)}
                         >
-                            <el-input v-model={this.form.extData[widgetInfo.vModel]}  {...{ props: ElInputAttr }}
+                            <el-input placeholder={widgetInfo.placeholder} autofocus={this.kevin_input_handleAutoFocus(widgetInfo)} ref={widgetInfo.WIDGETID} v-model={this.form.extData[widgetInfo.vModel]} maxlength={widgetInfo.maxlength || '-'} show-word-limit={widgetInfo.maxlength ? true : false}  {...{ props: ElInputAttr }}
                                 onBlur={($event) => {
                                     this.elInputBlur(widgetInfo, $event)
                                 }}
@@ -86,6 +86,13 @@ export default {
                 </el-col>
 
             )
+        },
+        kevin_input_handleAutoFocus(widgetInfo) {
+            if (widgetInfo.autofocus) {
+                this.$nextTick(() => {
+                    this.$refs[widgetInfo.WIDGETID].focus()
+                })
+            }
         },
         //        elinput 键盘事件  目前只实现回车
         elInputKeyUpEvents(widgetInfo, keyInfo) {

@@ -48,6 +48,13 @@
                         <el-divider content-position="left">Input事件</el-divider>
                         <el-row>
                             <el-col :span="12">
+                                <el-form-item label="状态脚本事件" prop="events.disabledCode">
+                                    <el-input v-model="slotParams.events.disabledCode" readonly>
+                                        <el-button slot="append" @click="e_editdisabledCode">编辑</el-button>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
                                 <el-form-item label="Focus事件" prop="events.focus">
                                     <el-input v-model="slotParams.events.focus" readonly>
                                         <el-button slot="append" @click="e_editFocus">编辑</el-button>
@@ -109,6 +116,10 @@ export default {
         }
     },
     methods: {
+        e_editdisabledCode(){
+            this.editType = 'editDisabledCode'
+            this.$refs.KevinEditors.changeEditor({ value: this.slotParams.events.disabledCode || 'return false' });
+        },
         e_editEnter(){
             this.editType = 'editEnter'
             this.$refs.KevinEditors.changeEditor({ value: this.slotParams.events.enter });
@@ -134,6 +145,8 @@ export default {
                 this.slotParams.events.clear = this.formatCode(code)
             }else if(this.editType == 'editEnter'){
                 this.slotParams.events.enter = this.formatCode(code)
+            }else if(this.editType == 'editDisabledCode'){
+                this.slotParams.events.disabledCode = this.formatCode(code)
             }
         },
         formatCode(code) {

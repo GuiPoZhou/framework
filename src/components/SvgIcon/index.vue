@@ -12,8 +12,9 @@ export default {
   name: 'SvgIcon',
   props: {
     iconClass: {
-      type: String,
-      required: true
+      type: String|Object,
+      required: true,
+      default:"kongbai"
     },
     className: {
       type: String,
@@ -36,11 +37,11 @@ export default {
     },
     styleExternalIcon() {
       return {
-        mask: `url(${this.iconClass}) no-repeat 50% 50%`,
-        '-webkit-mask': `url(${this.iconClass}) no-repeat 50% 50%`
+        mask: `url(${this.iconClass || 'kongbai'}) no-repeat 50% 50%`,
+        '-webkit-mask': `url(${this.iconClass || 'kongbai'}) no-repeat 50% 50%`
       }
     }
-  }
+  },
 }
 </script>
 

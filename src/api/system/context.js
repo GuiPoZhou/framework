@@ -23,3 +23,11 @@ export function setEnableEln(val) {
 		method: 'PUT'
 	})
 }
+
+// 设置启用ELN版本受控
+export function setElnVersionControlled(val) {
+	return request({
+		url: '/system/context/setGlobalValue/elnVersionControl/' + val,
+		method: 'PUT'
+	})
+}

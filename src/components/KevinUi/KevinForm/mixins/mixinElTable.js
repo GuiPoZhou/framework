@@ -1,4 +1,7 @@
-import { getToken } from '@/utils/auth'
+// import { getToken } from '@/utils/auth'
+const getToken = ()=>{
+    return localStorage.getItem('Admin-Token')
+}
 export default {
     methods: {
         renderElTable(widgetInfo, widgetIndex) {
@@ -14,8 +17,12 @@ export default {
                         span-method={this.objectSpanMethod(widgetInfo)}
                         height={widgetInfo.height ? (this.innerHeight * (widgetInfo.height / 100)) : '600'} default-expand-all
                         columns={widgetInfo.tableColumns}
+                        row-key={widgetInfo.rowKey}
+                        showHeader={widgetInfo.showHeader == undefined ? true : widgetInfo.showHeader}
                         data={widgetInfo.tableData}
+                        widgetInfo={widgetInfo}
                         hiddenSelection={widgetInfo.hiddenSelection}
+                        context={this.context}
                         style="width:100%;" border
                         scopedSlots={this.getTableScopedSlots(widgetInfo)}
                         onSelectionChange={(e) => {
@@ -24,8 +31,11 @@ export default {
                     {
                         widgetInfo.openPagination ?
                             <kevinPagination
+                                key={widgetIndex}
+                                ref={widgetInfo.WIDGETID + 'Page'}
+                                hidden={widgetInfo.paginationOptions.total == 0}
                                 total={widgetInfo.paginationOptions.total}
-                                page={widgetInfo.paginationOptions.page}
+                                page$sync={widgetInfo.paginationOptions.page}
                                 limit={eval(widgetInfo.paginationOptions.pageSizes)[0]}
                                 pageSizes={eval(widgetInfo.paginationOptions.pageSizes)}
                                 onPagination={(pageInfo) => {
@@ -52,10 +62,21 @@ export default {
         },
         // 默认接受四个值 { 当前行的值, 当前列的值, 行的下标, 列的下标 }
         objectSpanMethod(widgetInfo) {
-            if (widgetInfo.spanMethod) {
+            if (widgetInfo.openMerge) {
+                if (typeof widgetInfo.mergeArr == 'string') {
+                    widgetInfo.mergeArr = widgetInfo.mergeArr.split(',')
+                }
+
+                if (!widgetInfo.mergeObj) {
+                    widgetInfo.mergeObj = {}
+                    widgetInfo.mergeArr.forEach(item => {
+                        widgetInfo.mergeObj[item] = []
+                    })
+                }
                 return (({ row, column, rowIndex, columnIndex }) => {
                     // 判断列的属性
                     if (widgetInfo.mergeArr.indexOf(column.property) !== -1) {
+
                         // 判断其值是不是为0
                         if (widgetInfo.mergeObj[column.property][rowIndex]) {
                             return [widgetInfo.mergeObj[column.property][rowIndex], 1]
@@ -128,11 +149,20 @@ export default {
             new Function('ctx', '_this', 'slotButtonInfo', 'scope', 'columnInfo', 'widgetInfo', slotButtonInfo.events)(this.context, this, slotButtonInfo, scope, columnInfo, widgetInfo)
         },
         checkMainTableActionButtonStatusEvents(slotButtonInfo, scope, columnInfo, widgetInfo) {
-            if (!slotButtonInfo.actionStatusEvents) {
-                return true
+            if (!slotButtonInfo.perm) {
+                if (!slotButtonInfo.actionStatusEvents) {
+                    return true
+                } else {
+                    return new Function('ctx', '_this', 'slotButtonInfo', 'scope', 'columnInfo', 'widgetInfo', slotButtonInfo.actionStatusEvents)(this.context, this, slotButtonInfo, scope, columnInfo, widgetInfo)
+                }
             } else {
-                return new Function('ctx', '_this', 'slotButtonInfo', 'scope', 'columnInfo', 'widgetInfo', slotButtonInfo.actionStatusEvents)(this.context, this, slotButtonInfo, scope, columnInfo, widgetInfo)
+                if (!slotButtonInfo.actionStatusEvents && this.$checkPermi([slotButtonInfo.perm])) {
+                    return true
+                } else {
+                    return this.$checkPermi([slotButtonInfo.perm]) && new Function('ctx', '_this', 'slotButtonInfo', 'scope', 'columnInfo', 'widgetInfo', slotButtonInfo.actionStatusEvents)(this.context, this, slotButtonInfo, scope, columnInfo, widgetInfo)
+                }
             }
+
         },
         appendCommonTableColumns(scopedSlots, columnInfo, columnIndex, widgetInfo) {
             scopedSlots[columnInfo['slotName']] = (scope) => {
@@ -167,8 +197,15 @@ export default {
                         return this.commonTableSlotElLink(scope, columnInfo, columnIndex, widgetInfo)
                     case 'codeHandle':
                         return this.commonTableSlotCodeHandle(scope, columnInfo, columnIndex, widgetInfo)
+                    case 'customize':
+                        return this.commonTableSlotCustomize(scope, columnInfo, columnIndex, widgetInfo)
                 }
             }
+        },
+        commonTableSlotCustomize(scope, columnInfo, columnIndex, widgetInfo) {
+            return (
+                <el-button type="text">选择组件</el-button>
+            )
         },
         commonTableSlotCodeHandle(scope, columnInfo, columnIndex, widgetInfo) {
             switch (columnInfo.vModelActionOptions.showComponent) {
@@ -189,7 +226,7 @@ export default {
             return new Function('ctx', '_this', 'scope', 'columnInfo', 'widgetInfo', columnInfo.vModelActionOptions.events.handle)(this.context, this, scope, columnInfo, widgetInfo)
         },
         commonTableSlotElLink(scope, columnInfo, columnIndex, widgetInfo) {
-            if (columnInfo.vModelType == 'fixed') {
+            if (!columnInfo.vModelActionOptions.valueType || columnInfo.vModelActionOptions.valueType == 'string') {
                 return (
                     <el-link
                         type={columnInfo.vModelActionOptions.type}
@@ -199,21 +236,57 @@ export default {
                         onClick={() => {
                             this.common_table_slot_elLink_click(scope, columnInfo, widgetInfo)
                         }}
-                    >{scope.row[columnInfo['prop']]}</el-link>
+                    >{this.commonTableSlotElLinkPropCode(scope, columnInfo, widgetInfo)}</el-link>
                 )
-            } else {
-                return (
-                    <el-link
-                        type={columnInfo.vModelActionOptions.type}
-                        underline={columnInfo.vModelActionOptions.underline}
-                        disabled={columnInfo.vModelActionOptions.disabled}
-                        icon={columnInfo.vModelActionOptions.icon}
-                        onClick={() => {
-                            this.common_table_slot_elLink_click(scope, columnInfo, widgetInfo)
-                        }}
-                    >{scope.row.extData[columnInfo['prop']]}</el-link>
-                )
+            } else if (columnInfo.vModelActionOptions.valueType == 'array') {
+
+                let dataList = this.commonTableSlotElLinkPropCode(scope, columnInfo, widgetInfo)
+                if (Object.prototype.toString.call(dataList) === '[object Array]') {
+                    if (dataList.length != 0) {
+                        return (
+                            dataList.map((slotLinkInfo, slotLinkIndex) => {
+                                return (
+                                    <el-link
+                                        style="margin-right:10px"
+                                        type={columnInfo.vModelActionOptions.type}
+                                        underline={columnInfo.vModelActionOptions.underline}
+                                        disabled={columnInfo.vModelActionOptions.disabled}
+                                        icon={columnInfo.vModelActionOptions.icon}
+                                        onClick={() => {
+                                            this.common_table_slot_elLink_array_click(slotLinkInfo, scope, columnInfo, widgetInfo)
+                                        }}
+                                    >{this.commonTableSlotElLinkArrayPropCode(slotLinkInfo, scope, columnInfo, widgetInfo)}</el-link>
+                                )
+                            })
+                        )
+
+                    } else {
+                        throw new Error('返回值为空数组')
+                    }
+                } else {
+                    throw new Error('已开启返回值为数组')
+                }
             }
+
+        },
+        commonTableSlotElLinkArrayPropCode(slotLinkInfo, scope, columnInfo, widgetInfo) {
+            return new Function('ctx', '_this', 'slotLinkInfo', 'scope', 'columnInfo', 'widgetInfo', columnInfo.vModelActionOptions.events.arrayPropCode)(this.context, this, slotLinkInfo, scope, columnInfo, widgetInfo)
+
+        },
+        commonTableSlotElLinkPropCode(scope, columnInfo, widgetInfo) {
+            if (!columnInfo.vModelActionOptions.events || !columnInfo.vModelActionOptions.events.propCode) {
+                if (columnInfo.vModelType == 'fixed') {
+                    return scope.row[columnInfo['prop']];
+                } else {
+                    return scope.row.extData[columnInfo['prop']];
+                }
+            } else {
+                return new Function('ctx', '_this', 'scope', 'columnInfo', 'widgetInfo', columnInfo.vModelActionOptions.events.propCode)(this.context, this, scope, columnInfo, widgetInfo)
+            }
+        },
+        common_table_slot_elLink_array_click(slotLinkInfo, scope, columnInfo, widgetInfo) {
+            new Function('ctx', '_this', 'slotLinkInfo', 'scope', 'columnInfo', 'widgetInfo', columnInfo.vModelActionOptions.events.click)(this.context, this, slotLinkInfo, scope, columnInfo, widgetInfo)
+
         },
         common_table_slot_elLink_click(scope, columnInfo, widgetInfo) {
             new Function('ctx', '_this', 'scope', 'columnInfo', 'widgetInfo', columnInfo.vModelActionOptions.events.click)(this.context, this, scope, columnInfo, widgetInfo)
@@ -266,7 +339,7 @@ export default {
             return (
                 <div class="el-table_slot_upload">
                     <el-upload action={this.$BASE_API + columnInfo.vModelActionOptions.action + '?Authorization=' + getToken() + '&MenuId=' + localStorage.getItem('menuId')}
-                        disabled={columnInfo.vModelActionOptions.disabled}
+                        disabled={columnInfo.vModelActionOptions.disabled || this.commonTableSlotDisabledStatus(scope, columnInfo, widgetInfo)}
                         accept={columnInfo.vModelActionOptions.accept ? columnInfo.vModelActionOptions.accept : '-'}
                         headers={columnInfo.vModelActionOptions.headers}
                         drag={columnInfo.vModelActionOptions.drag}
@@ -291,10 +364,15 @@ export default {
                         }
 
                     </el-upload>
-                    <el-button style="margin:0 0.7rem" type="text">查看</el-button>
+                    <el-button style="margin:0 0.7rem" type="text" onClick={() => {
+                        this.commonTableSlotUploadShow(scope, columnInfo, widgetInfo)
+                    }}>查看</el-button>
                 </div>
 
             )
+        },
+        commonTableSlotUploadShow(scope, columnInfo, widgetInfo) {
+            new Function('ctx', '_this', 'scope', 'columnInfo', 'widgetInfo', columnInfo.vModelActionOptions.events.showCode)(this.context, this, scope, columnInfo, widgetInfo)
         },
         common_table_slot_upload_success(res, scope, columnInfo, widgetInfo) {
             new Function('ctx', '_this', 'res', 'scope', 'columnInfo', 'widgetInfo', columnInfo.vModelActionOptions.events.onSuccess)(this.context, this, res, scope, columnInfo, widgetInfo)
@@ -303,6 +381,7 @@ export default {
             let SlotDatePickerOptions = {
                 ...columnInfo.vModelActionOptions
             }
+            SlotDatePickerOptions.disabled = columnInfo.vModelActionOptions.disabled || this.commonTableSlotDisabledStatus(scope, columnInfo, widgetInfo)
             if (columnInfo.vModelActionOptions.type == 'datetimerange' || columnInfo.vModelActionOptions.type == 'daterange' || columnInfo.vModelActionOptions.type == 'monthrange') {
                 SlotDatePickerOptions.defaultTime = eval(columnInfo.vModelActionOptions.defaultTime)
             } else {
@@ -340,7 +419,7 @@ export default {
                 return (
                     <el-radio-group
                         v-model={scope.row[columnInfo['prop']]}
-                        disabled={columnInfo.vModelActionOptions.disabled}
+                        disabled={columnInfo.vModelActionOptions.disabled || this.commonTableSlotDisabledStatus(scope, columnInfo, widgetInfo)}
                         onInput={(newValue) => {
                             this.tableSlotRadioInput(newValue, scope, columnInfo, widgetInfo)
                         }}
@@ -358,7 +437,7 @@ export default {
                 return (
                     <el-radio-group
                         v-model={scope.row.extData[columnInfo['prop']]}
-                        disabled={columnInfo.vModelActionOptions.disabled}
+                        disabled={columnInfo.vModelActionOptions.disabled || this.commonTableSlotDisabledStatus(scope, columnInfo, widgetInfo)}
                         onInput={(newValue) => {
                             this.tableSlotRadioInput(newValue, scope, columnInfo, widgetInfo)
                         }}
@@ -380,7 +459,7 @@ export default {
         commonTableSlotInputNumberRender(scope, columnInfo, columnIndex, widgetInfo) {
             let inputNumberOptions = {
                 label: columnInfo.vModelActionOptions.label,
-                disabled: columnInfo.vModelActionOptions.disabled,
+                disabled: columnInfo.vModelActionOptions.disabled || this.commonTableSlotDisabledStatus(scope, columnInfo, widgetInfo),
                 readonly: columnInfo.vModelActionOptions.readonly,
                 min: columnInfo.vModelActionOptions.min,
                 max: columnInfo.vModelActionOptions.max,
@@ -454,8 +533,9 @@ export default {
                             this.tableSlotInputEnter(keyInfo, scope, columnInfo, widgetInfo)
                         }}
                         key={columnIndex}
+                        readonly={columnInfo.vModelActionOptions.readonly}
                         showPassword={columnInfo.vModelActionOptions.showPassword}
-                        disabled={columnInfo.vModelActionOptions.disabled}
+                        disabled={columnInfo.vModelActionOptions.disabled || this.commonTableSlotDisabledStatus(scope, columnInfo, widgetInfo)}
                         v-model={scope.row[columnInfo['prop']]}></el-input>
                 )
             } else {
@@ -477,11 +557,18 @@ export default {
                             this.tableSlotInputEnter(keyInfo, scope, columnInfo, widgetInfo)
                         }}
                         key={columnIndex}
-                        disabled={columnInfo.vModelActionOptions.disabled}
+                        readonly={columnInfo.vModelActionOptions.readonly}
+                        disabled={columnInfo.vModelActionOptions.disabled || this.commonTableSlotDisabledStatus(scope, columnInfo, widgetInfo)}
                         showPassword={columnInfo.vModelActionOptions.showPassword}
                         v-model={scope.row.extData[columnInfo['prop']]}></el-input>
                 )
             }
+        },
+        commonTableSlotDisabledStatus(scope, columnInfo, widgetInfo) {
+            if (!columnInfo.vModelActionOptions.events || !columnInfo.vModelActionOptions.events.disabledCode) {
+                return false
+            }
+            return new Function('ctx', '_this', 'scope', 'columnInfo', 'widgetInfo', columnInfo.vModelActionOptions.events.disabledCode)(this.context, this, scope, columnInfo, widgetInfo)
         },
         tableSlotInputClear(scope, columnInfo, widgetInfo) {
             if (columnInfo.vModelActionOptions.events && columnInfo.vModelActionOptions.events.clear) {
@@ -521,6 +608,7 @@ export default {
                     <el-select v-model={scope.row[columnInfo['prop']]}
                         filterable={columnInfo.vModelActionOptions.filterable}
                         multiple={columnInfo.vModelActionOptions.multiple}
+                        disabled={columnInfo.vModelActionOptions.disabled || this.commonTableSlotDisabledStatus(scope, columnInfo, widgetInfo)}
                         multiple-limit={columnInfo.vModelActionOptions.multipleLimit}>
                         {
                             columnInfo.vModelActionOptions.dataSource.list.map((selectOptions, selectOptionIndex) => {
@@ -536,6 +624,7 @@ export default {
                     <el-select v-model={scope.row.extData[columnInfo['prop']]}
                         filterable={columnInfo.vModelActionOptions.filterable}
                         multiple={columnInfo.vModelActionOptions.multiple}
+                        disabled={columnInfo.vModelActionOptions.disabled || this.commonTableSlotDisabledStatus(scope, columnInfo, widgetInfo)}
                         multiple-limit={columnInfo.vModelActionOptions.multipleLimit}>
                         {
                             columnInfo.vModelActionOptions.dataSource.list.map((selectOptions, selectOptionIndex) => {

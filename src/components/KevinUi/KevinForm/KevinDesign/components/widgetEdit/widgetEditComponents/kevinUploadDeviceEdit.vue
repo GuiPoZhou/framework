@@ -1,29 +1,37 @@
 <template>
     <widgetEditContainer>
-        <el-form slot="wecLeft" :model="editParams" ref="editParams" label-width="100px" class="demo-ruleForm">
+        <el-form slot="wecLeft" :model="editParams" ref="editParams" label-position="top" label-width="130px"
+            class="demo-ruleForm">
             <el-divider content-position="left">附件类型维护</el-divider>
             <el-row style="margin:0.7rem 0">
                 <el-col :span="24">
-                    <el-button size="small" type="primary" style="margin-bottom: 0.7rem;"
-                        @click="e_addType">新增类型</el-button>
+                    <el-form-item label="获取远程数据脚本" prop="typeDataSource"
+                        :rules="[{ required: true, message: '请输入获取类型的脚本', trigger: 'blur' }]">
+                        <el-input v-model="editParams.typeDataSource" readonly>
+                            <el-button slot="append" size="small" @click="e_editFileTypeSource">编辑</el-button>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" style="margin-bottom: 0.7rem;">
+                    <el-button type="success" size="mini" @click="e_testDataSource">测试脚本</el-button>
                 </el-col>
                 <el-col :span="24">
                     <el-table :data="editParams.typeList" style="width: 100%" border>
                         <el-table-column prop="label" label="类型名称" align="center"></el-table-column>
                         <el-table-column prop="value" label="类型值" align="center"></el-table-column>
-                        <el-table-column label="操作" align="center">
+                        <!-- <el-table-column label="操作" align="center">
                             <template slot-scope="scope">
                                 <el-button type="text" @click="e_deletetype(scope.$index)">删除</el-button>
                                 <el-button type="text" @click="e_setDefaultType(scope.row)">设为默认类型</el-button>
                             </template>
-                        </el-table-column>
+                        </el-table-column> -->
                     </el-table>
                 </el-col>
-                <el-col :span="12" style="margin-top: 0.7rem;">
+                <!-- <el-col :span="12" style="margin-top: 0.7rem;">
                     <el-form-item label="默认附件类型">
                         <el-input v-model="editParams.selectType" readonly></el-input>
                     </el-form-item>
-                </el-col>
+                </el-col> -->
             </el-row>
             <el-divider content-position="left">附件基础维护</el-divider>
             <el-row>
@@ -31,6 +39,12 @@
                     <el-form-item label="上传地址" prop="options.action"
                         :rules="[{ required: true, message: '请维护好附件上传的Api地址', trigger: 'blur' }]">
                         <el-input v-model="editParams.options.action"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="附件类型键" prop="typeProp"
+                        :rules="[{ required: true, message: '请维护附件类型键', trigger: 'blur' }]">
+                        <el-input v-model="editParams.typeProp"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -86,6 +100,7 @@ export default {
     data() {
         return {
             editParams: {
+                typeDataSource: "",
                 typeList: [],
                 actionList: [],
                 options: {}
@@ -95,11 +110,24 @@ export default {
         }
     },
     methods: {
+        e_testDataSource() {
+            if (!this.editParams.typeDataSource) {
+                this.$message.error('请维护获取远程数据脚本')
+                return
+            }
+            new Function('ctx', 'widgetInfo', this.editParams.typeDataSource)(window.KevinContext, this.editParams)
+        },
+        e_editFileTypeSource() {
+            this.editType = 'FileTypeSource'
+            this.$refs.KevinEditors.changeEditor({ value: this.editParams.typeDataSource || "ctx.$net('/system/dict/data/type/'+\"字典类型\", 'get').then((re) => { let arr = []; re.data.forEach((item) => { let obj = { label: item.dictLabel, value: item.dictValue, }; arr.push(obj); }); widgetInfo.typeList = arr; }); " });
+        },
         handleEditorInput(code) {
             if (this.editType == 'statusEvents') {
                 this.editParams.actionList[this.editIndex].statusEvents = this.formatCode(code)
             } else if (this.editType == 'clickEvents') {
                 this.editParams.actionList[this.editIndex].clickEvents = this.formatCode(code)
+            } else if (this.editType == 'FileTypeSource') {
+                this.$set(this.editParams, 'typeDataSource', this.formatCode(code))
             }
         },
         e_editClickEvents(scope) {
@@ -179,6 +207,7 @@ export default {
 
         },
         e_save() {
+            console.log('this.editParams', this.editParams)
             this.$refs.editParams.validate(v => {
                 if (v) {
                     this.$emit('save', this.editParams)

@@ -4,6 +4,7 @@ import { getRouters } from '@/api/menu'
 import Layout from '@/layout/index'
 import ParentView from '@/components/ParentView'
 import InnerLink from '@/layout/components/InnerLink'
+import { net } from '@/api/jiaozhengRequest'
 
 const permission = {
   state: {
@@ -30,11 +31,20 @@ const permission = {
   },
   actions: {
     // 生成路由
-    GenerateRoutes({ commit }) {
+    GenerateRoutes({ commit, rootState }, forcedUpdate = null) {
+      console.log('rootState', rootState)
       return new Promise(resolve => {
-
         // 向后端请求路由数据
-        getRouters().then(res => {
+        getRouters().then(async res => {
+          if (rootState.system.systemInfo.extData.openMission) {
+            try{
+              let noticeCountList = await getNoticeCount(forcedUpdate)
+              handleMenuNotice(res.data, noticeCountList)
+            }catch{
+
+            }
+            
+          }
           const sdata = JSON.parse(JSON.stringify(res.data))
           const rdata = JSON.parse(JSON.stringify(res.data))
           const sidebarRoutes = filterAsyncRouter(sdata)
@@ -64,11 +74,57 @@ const permission = {
   }
 }
 
+async function getNoticeCount(forcedUpdate) {
+  let url = '/v1/messageNotify/getPendingCount'
+  if (forcedUpdate || forcedUpdate == 0) {
+    url = '/v1/messageNotify/getPendingCount?forcedUpdate=' + forcedUpdate
+  }
+  let re = await net(url, 'get')
+  if (re.data && re.data.length > 0) {
+    return re.data
+  } else {
+    return []
+  }
+}
+function handleMenuNotice(menuList, noticeCountList) {
+  menuList.forEach(item => {
+    noticeCountList.forEach(nn => {
+      if (item.menuId == nn.menuId) {
+        item.meta.hasPending = nn.hasPending
+        item.meta.menuFlag = nn.menuFlag
+        item.meta.pendingCount = nn.pendingCount
+      }
+    })
+    if (item.children && item.children.length > 0) {
+      handleMenuNotice(item.children, noticeCountList)
+    }
+  })
+}
+
+function queryToObject(query) {
+  const pairs = query.split('&');
+  const result = {};
+
+  pairs.forEach(function (pair) {
+    const parts = pair.split('=');
+    if (parts.length === 2) {
+      result[parts[0]] = decodeURIComponent(parts[1]);
+    }
+  });
+
+  return JSON.stringify(result);
+}
 // 遍历后台传来的路由字符串，转换为组件对象
 function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
   return asyncRouterMap.filter(route => {
-    if(!route.path){
-      route.path =''
+    if (!route.path) {
+      route.path = ''
+    }
+    if (route.path.includes('?')) {
+      let handle = route.path.split('?')
+      route.path = handle[0]
+
+      route.query = queryToObject(handle[1])
     }
     if (type && route.children) {
       route.children = filterChildren(route.children)
@@ -98,14 +154,14 @@ function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
 function filterChildren(childrenMap, lastRouter = false) {
   var children = []
   childrenMap.forEach((el, index) => {
-    if(!el.path){
-      el.path ='/'
+    if (!el.path) {
+      el.path = '/'
     }
     if (el.children && el.children.length) {
       if (el.component === 'ParentView' && !lastRouter) {
         el.children.forEach(c => {
-          if(!c.path){
-            c.path ='/'
+          if (!c.path) {
+            c.path = '/'
           }
           c.path = el.path + '/' + c.path
           if (c.children && c.children.length) {

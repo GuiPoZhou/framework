@@ -1,4 +1,7 @@
-import { getToken } from '@/utils/auth'
+// import { getToken } from '@/utils/auth'
+const getToken = ()=>{
+    return localStorage.getItem('Admin-Token')
+}
 export default {
 	methods: {
 		renderElUpload(widgetInfo, widgetIndex) {
@@ -13,7 +16,7 @@ export default {
 							</el-button>
 							{
 								!widgetInfo.hideDelte ?
-									<el-button v-show={this.context.businessEnv != 'detail'} style="color:red" type="text" size="small"
+									<el-button v-show={!widgetInfo.disabled} style="color:red" type="text" size="small"
 										onClick={() => {
 											this.elUploadDelete(prop, widgetInfo)
 										}}>删除
@@ -23,18 +26,23 @@ export default {
 					)
 				}
 			}
+			let isLangLabel = false
+            if (widgetInfo.title, this.getStringWidth(widgetInfo.title) > 11) {
+                isLangLabel = true
+            }
+
 			return (
 				<el-col class={this.draggableOpen ? 'RenderCol' : ''} key={widgetIndex} span={widgetInfo.colSpan}>
 					{
 						this.showEditEnterNode(widgetIndex, widgetInfo)
 					}
-					<el-form-item label={widgetInfo.title}>
+					<el-form-item label={widgetInfo.title} class={this.context.KevinJson.KevinWidget.formlabelPosition != 'top' && isLangLabel ? "foldLabel" : ''}>
 						<el-upload action={this.$BASE_API + widgetInfo.action + '?Authorization=' + getToken() + '&MenuId=' + localStorage.getItem('menuId')}
 							disabled={widgetInfo.disabled}
 							accept={widgetInfo.accept ? widgetInfo.accept : '-'}
 							headers={widgetInfo.headers}
 							drag={widgetInfo.drag}
-							limit={widgetInfo.limit ? widgetInfo.limit : '-'}
+							limit={widgetInfo.limit ? widgetInfo.limit : 100000}
 							scopedSlots={scopedSlots}
 							before-upload={(file) => {
 								eval(widgetInfo.events.beforeUpload)

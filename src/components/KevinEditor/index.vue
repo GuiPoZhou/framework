@@ -2,31 +2,32 @@
   <div class="monaco-container" ref="codeEditor"></div>
 </template>
 <script>
-import * as monaco from "monaco-editor"
+import * as monaco from "monaco-editor";
 
 const defaultOptions = {
   selectOnLineNumbers: true,
   roundedSelection: false,
-  wordWrap: 'on', // 自动换行 'on','off'
-  language: 'javascript', // 常用的有css/html/java/javascript/json/csharp(.net)'
+  wordWrap: "on", // 自动换行 'on','off'
+  language: "javascript", // 常用的有css/html/java/javascript/json/csharp(.net)'
   overviewRulerBorder: false,
-  minimap: { // 关闭小地图
+  minimap: {
+    // 关闭小地图
     enabled: true,
   },
   autoIndent: true, // 自动布局
   automaticLayout: false, // 自动布局
-  theme: 'vs', // vs, hc-black, or vs-dark
+  theme: "vs", // vs, hc-black, or vs-dark
   formatOnPaste: true,
   formatOnType: true,
   glyphMargin: true, //字形边缘
   fontSize: 14, // 字体大小
-  readOnly: false // 只读
-}
+  readOnly: false, // 只读
+};
 
 function spliceSemiAndDoubleQoute(val) {
   // eslint-disable-next-line no-undef
   return prettier.format(val, {
-    parser: 'babel',
+    parser: "babel",
     semi: true,
     //字符串用单引号包,裹，开发规范统一
     singleQuote: true,
@@ -35,54 +36,57 @@ function spliceSemiAndDoubleQoute(val) {
     spaceBeforeFunctionParen: false,
     // eslint-disable-next-line no-undef
     plugins: prettierPlugins,
-  })
+  });
 }
 const formatProvider = {
   provideDocumentFormattingEdits(model) {
-    return [{
-      text: spliceSemiAndDoubleQoute(model.getValue()),
-      range: model.getFullModelRange()
-    }]
-  }
-}
-
+    return [
+      {
+        text: spliceSemiAndDoubleQoute(model.getValue()),
+        range: model.getFullModelRange(),
+      },
+    ];
+  },
+};
+import kevinSnippets from "./codeSnippets/index";
 export default {
-  name: 'MonacoEditor',
+  name: "MonacoEditor",
   props: {
     options: {
       type: Object,
-      default: () => { }
+      default: () => {},
     },
     value: {
       type: String,
-      default: ''
-    }
+      default: "",
+    },
   },
   data() {
     return {
+      kevinSnippets,
       content: this.value,
-      monacoEditor: null
-    }
+      monacoEditor: null,
+    };
   },
   watch: {
     value(val) {
-      this.content = val
+      this.content = val;
     },
     options: {
       handler(val) {
-        this.monacoEditor.updateOptions({ ...val })
+        this.monacoEditor.updateOptions({ ...val });
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   mounted() {
-    this.initEditor()
+    this.initEditor();
   },
   methods: {
     spliceSemiAndDoubleQoute(val) {
       // eslint-disable-next-line no-undef
       return prettier.format(val, {
-        parser: 'babel',
+        parser: "babel",
         //不保留行尾分号去掉，开发规范统一
         semi: true,
         //字符串用单引号包,裹，开发规范统一
@@ -92,55 +96,67 @@ export default {
         spaceBeforeFunctionParen: false,
         // eslint-disable-next-line no-undef
         plugins: prettierPlugins,
-      })
+      });
     },
-    async formatCode() {
-
-
+    async formatCode() {},
+    // monaco.languages.registerCompletionItemProvider()
+    registerCompletionItemProvider() {
+      let snippetsList = [];
+      snippetsList = [...kevinSnippets];
+      // 添加自定义的代码片段
+      monaco.languages.registerCompletionItemProvider("javascript", {
+        provideCompletionItems: function (model, position) {
+          return {
+            suggestions: snippetsList,
+          };
+        },
+      });
     },
     initEditor() {
       // 初始化编辑器实例
-      monaco.languages.registerDocumentFormattingEditProvider('javascript', formatProvider)
-
-      this.monacoEditor = monaco.editor.create(this.$refs['codeEditor'], {
+      monaco.languages.registerDocumentFormattingEditProvider(
+        "javascript",
+        formatProvider
+      );
+      this.registerCompletionItemProvider();
+      this.monacoEditor = monaco.editor.create(this.$refs["codeEditor"], {
         value: this.content,
         autoIndex: true,
         ...defaultOptions,
-        ...this.options
-      })
-      this.monacoEditor.getAction(['editor.action.formatDocument'])._run()
+        ...this.options,
+      });
+      this.monacoEditor.getAction(["editor.action.formatDocument"])._run();
       // 监听编辑器content变化
       this.monacoEditor.onDidChangeModelContent(() => {
-        this.$emit('input', this.monacoEditor.getValue())
-      })
+        this.$emit("input", this.monacoEditor.getValue());
+      });
     },
     changeEditor(data) {
-      this.monacoEditor.setValue(data.value)
-      this.monacoEditor.updateOptions({ ...data.options })
-      this.monacoEditor.getAction(['editor.action.formatDocument'])._run()
+      this.monacoEditor.setValue(data.value);
+      this.monacoEditor.updateOptions({ ...data.options });
+      this.monacoEditor.getAction(["editor.action.formatDocument"])._run();
     },
     layout() {
-      console.log('重新渲染')
-      this.initEditor()
+      console.log("重新渲染");
+      this.initEditor();
     },
     insert(text) {
-      text = text || ''
+      text = text || "";
       var position = this.monacoEditor.getPosition();
-      this.monacoEditor.executeEdits('', [
+      this.monacoEditor.executeEdits("", [
         {
           range: {
             startLineNumber: position.lineNumber,
             startColumn: position.column,
             endLineNumber: position.lineNumber,
-            endColumn: position.column
+            endColumn: position.column,
           },
-          text: text
-        }
+          text: text,
+        },
       ]);
     },
-  }
-}
-
+  },
+};
 </script>
 <style lang="scss" scoped>
 .monaco-container {

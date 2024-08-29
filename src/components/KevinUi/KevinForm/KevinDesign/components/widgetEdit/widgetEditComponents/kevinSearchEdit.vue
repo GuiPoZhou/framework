@@ -17,9 +17,17 @@
                         <el-radio :label="false">否</el-radio>
                         <el-radio :label="true">是</el-radio>
                     </el-radio-group>
-
                 </el-form-item>
             </el-col>
+             <el-col :span="24">
+                <el-form-item label="是否开启高级搜索" prop="openAdvancedSearch">
+                    <el-radio-group v-model="editParams.openAdvancedSearch">
+                        <el-radio :label="false">否</el-radio>
+                        <el-radio :label="true">是</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+            </el-col>
+
             <el-col :span="24">
                 <el-form-item label="搜索按钮事件" prop="events.search"
                     :rules="[{ required: true, message: '请编辑搜索按钮事件', trigger: 'change' }]">

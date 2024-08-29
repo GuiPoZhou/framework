@@ -13,3 +13,25 @@
 .kevin_main_page .el-select {
     width: 100%;
 }
+
+.kevin_main_page .el-tree-node.is-current>.el-tree-node__content {
+    background-color: #4468EE !important;
+    color: #FFD55E;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 0.2rem;
+}
+.table-fixed-remind {
+    // .el-table__fixed-right {
+    //   height: 100% !important; //设置高优先，以覆盖内联样式
+    // }
+   
+    // .el-table__fixed {
+    //   height: 100% !important; //设置高优先，以覆盖内联样式
+    // }
+    .is-scrolling-left,
+    .is-scrolling-none {
+      height: 320px !important; //设置高优先，以覆盖内联样式，根据自己表格的高度自行计算，设置的稍微偏大一点
+      padding-bottom: 20px;
+    }
+  }

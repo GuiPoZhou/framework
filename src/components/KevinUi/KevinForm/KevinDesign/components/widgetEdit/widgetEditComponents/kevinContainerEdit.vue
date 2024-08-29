@@ -6,7 +6,11 @@
                     <el-input v-model="editParams.title"></el-input>
                 </el-form-item>
             </el-col>
-         
+            <el-col :span="24">
+                    <el-form-item label="占据的列数" prop="colSpan">
+                        <el-input-number v-model="editParams.colSpan" :min="4" :max="24"></el-input-number>
+                    </el-form-item>
+                </el-col>
             <el-col :span="24">
                 <el-form-item label="是否默认隐藏" prop="isHide">
                     <el-radio-group v-model="editParams.isHide">

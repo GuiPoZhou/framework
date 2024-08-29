@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -12,15 +13,166 @@
   <script type="text/javascript" src="/lib/eloamWebCamera.js"></script>
   <script type="text/javascript" src="/lib/dayjs.js"></script>
   <script type="text/javascript" src="/lib/parser/standalone.js"></script>
+  <script type="text/javascript" src="/lib/gojs.js"></script>
   <script type="text/javascript" src="/lib/parser/parser-babel.js"></script>
-  <script type="text/javascript" src="<%= VUE_APP_BASE_API %>/pageoffice.js" id="po_js_main"></script>
-  <!-- <script type="text/javascript"  src="/lib/wpssdk.js" id="wpssdk"></script> -->
+<!--  <script type="text/javascript" src="<%= VUE_APP_BASE_API %>/pageoffice.js" id="po_js_main"></script>-->
 
-<!--  这块onlineoffice的配置信息移到了系统管理-主题管理-项目信息维护，然后设置配置信息在framework中的App.vue中的CreateOnlyOfficeSource-->
-<!--  <script type="text/javascript" src="http://192.168.36.59:9980/web-apps/apps/api/documents/api.js"></script>-->
-<!--  <link rel="stylesheet" href="http://192.168.36.59:9980/sdkjs-plugins/plugins.css">-->
-  <!--[if lt IE 11]>
-  <script>window.location.href = '/html/ie.html';</script><![endif]-->
+
+  <!-- luckysheet-source start -->
+  <link rel='stylesheet' href='/luckysheet/plugins/css/pluginsCss.css' />
+  <link rel='stylesheet' href='/luckysheet/plugins/plugins.css' />
+  <link rel='stylesheet' href='/luckysheet/css/luckysheet.css' />
+  <link rel='stylesheet' href='/luckysheet/css/gc.spread.sheets.designer.min.css' />
+  <link rel='stylesheet' href='/luckysheet/assets/iconfont/iconfont.css' />
+  <script src="/luckysheet/plugins/js/plugin.js"></script>
+  <script src="/luckysheet/luckysheet.umd.js"></script>
+  <!-- luckysheet-source end -->
+  <!-- <script src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=IeMzfzpurRodFSNCKnxxe310pmCW482d"></script> -->
+  <script>
+    // 定义一些常量
+    var x_PI = 3.14159265358979324 * 3000.0 / 180.0;
+    var PI = 3.1415926535897932384626;
+    var a = 6378245.0;
+    var ee = 0.00669342162296594323;
+
+    /**
+     * 百度坐标系 (BD-09) 与 火星坐标系 (GCJ-02)的转换 / 即百度转谷歌、高德
+     * @param { Number } bd_lon
+     * @param { Number } bd_lat
+     */
+    function bd09togcj02(bd_lon, bd_lat) {
+      var x_pi = 3.14159265358979324 * 3000.0 / 180.0
+      var x = bd_lon - 0.0065
+      var y = bd_lat - 0.006
+      var z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * x_pi)
+      var theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * x_pi)
+      var gg_lng = z * Math.cos(theta)
+      var gg_lat = z * Math.sin(theta)
+      return [gg_lng, gg_lat]
+    }
+
+    /**
+     * 火星坐标系 (GCJ-02) 与百度坐标系 (BD-09) 的转换 / 即谷歌、高德 转 百度
+     * @param { Number } lng
+     * @param { Number } lat
+     */
+    function gcj02tobd09(lng, lat) {
+      var z = Math.sqrt(lng * lng + lat * lat) + 0.00002 * Math.sin(lat * x_PI)
+      var theta = Math.atan2(lat, lng) + 0.000003 * Math.cos(lng * x_PI)
+      var bd_lng = z * Math.cos(theta) + 0.0065
+      var bd_lat = z * Math.sin(theta) + 0.006
+      return [bd_lng, bd_lat]
+    }
+
+    /**
+     * WGS84坐标系转火星坐标系GCj02 / 即WGS84 转谷歌、高德
+     * @param { Number } lng
+     * @param { Number } lat
+     */
+    function wgs84togcj02(lng, lat) {
+      if (outOfChina(lng, lat)) {
+        return [lng, lat]
+      } else {
+        var dlat = transformlat(lng - 105.0, lat - 35.0)
+        var dlng = transformlng(lng - 105.0, lat - 35.0)
+        var radlat = lat / 180.0 * PI
+        var magic = Math.sin(radlat)
+        magic = 1 - ee * magic * magic
+        var sqrtmagic = Math.sqrt(magic)
+        dlat = (dlat * 180.0) / ((a * (1 - ee)) / (magic * sqrtmagic) * PI)
+        dlng = (dlng * 180.0) / (a / sqrtmagic * Math.cos(radlat) * PI)
+        const mglat = lat + dlat
+        const mglng = lng + dlng
+        return [mglng, mglat]
+      }
+    }
+
+    /**
+     * GCJ02（火星坐标系） 转换为 WGS84 / 即谷歌高德转WGS84
+     * @param { Number } lng
+     * @param { Number } lat
+     */
+    function gcj02towgs84(lng, lat) {
+      if (outOfChina(lng, lat)) {
+        return [lng, lat]
+      }
+      else {
+        var dlat = transformlat(lng - 105.0, lat - 35.0)
+        var dlng = transformlng(lng - 105.0, lat - 35.0)
+        var radlat = lat / 180.0 * PI
+        var magic = Math.sin(radlat)
+        magic = 1 - ee * magic * magic
+        var sqrtmagic = Math.sqrt(magic)
+        dlat = (dlat * 180.0) / ((a * (1 - ee)) / (magic * sqrtmagic) * PI)
+        dlng = (dlng * 180.0) / (a / sqrtmagic * Math.cos(radlat) * PI)
+        const mglat = lat + dlat
+        const mglng = lng + dlng
+        return [lng * 2 - mglng, lat * 2 - mglat]
+      }
+    }
+
+    /**
+     * 百度坐标系转wgs84坐标系
+     * @param {*} lng
+     * @param {*} lat
+     */
+    function bd09towgs84(lng, lat) {
+      // 百度坐标系先转为火星坐标系
+      const gcj02 = bd09togcj02(lng, lat)
+      // 火星坐标系转wgs84坐标系
+      const result = gcj02towgs84(gcj02[0], gcj02[1])
+      return result
+    }
+
+    /**
+     * wgs84坐标系转百度坐标系
+     * @param {*} lng
+     * @param {*} lat
+     */
+    function wgs84tobd09(lng, lat) {
+      // wgs84先转为火星坐标系
+      const gcj02 = wgs84togcj02(lng, lat)
+      // 火星坐标系转百度坐标系
+      const result = gcj02tobd09(gcj02[0], gcj02[1])
+      return result
+    }
+
+    /**
+     * 经度转换
+     * @param { Number } lng
+     * @param { Number } lat
+     */
+    function transformlat(lng, lat) {
+      var ret = -100.0 + 2.0 * lng + 3.0 * lat + 0.2 * lat * lat + 0.1 * lng * lat + 0.2 * Math.sqrt(Math.abs(lng))
+      ret += (20.0 * Math.sin(6.0 * lng * PI) + 20.0 * Math.sin(2.0 * lng * PI)) * 2.0 / 3.0
+      ret += (20.0 * Math.sin(lat * PI) + 40.0 * Math.sin(lat / 3.0 * PI)) * 2.0 / 3.0
+      ret += (160.0 * Math.sin(lat / 12.0 * PI) + 320 * Math.sin(lat * PI / 30.0)) * 2.0 / 3.0
+      return ret
+    }
+
+    /**
+     * 纬度转换
+     * @param { Number } lng
+     * @param { Number } lat
+     */
+    function transformlng(lng, lat) {
+      var ret = 300.0 + lng + 2.0 * lat + 0.1 * lng * lng + 0.1 * lng * lat + 0.1 * Math.sqrt(Math.abs(lng))
+      ret += (20.0 * Math.sin(6.0 * lng * PI) + 20.0 * Math.sin(2.0 * lng * PI)) * 2.0 / 3.0
+      ret += (20.0 * Math.sin(lng * PI) + 40.0 * Math.sin(lng / 3.0 * PI)) * 2.0 / 3.0
+      ret += (150.0 * Math.sin(lng / 12.0 * PI) + 300.0 * Math.sin(lng / 30.0 * PI)) * 2.0 / 3.0
+      return ret
+    }
+
+    /**
+     * 判断是否在国内，不在国内则不做偏移
+     * @param {*} lng
+     * @param {*} lat
+     */
+    function outOfChina(lng, lat) {
+      return (lng < 72.004 || lng > 137.8347) || ((lat < 0.8293 || lat > 55.8271) || false)
+    }
+
+  </script>
   <style lang="scss" rel="stylesheet/scss" scoped>
     html,
     body,
@@ -107,6 +259,7 @@
         -ms-transform: rotate(0deg);
         transform: rotate(0deg);
       }
+
       100% {
         -webkit-transform: rotate(360deg);
         -ms-transform: rotate(360deg);
@@ -120,6 +273,7 @@
         -ms-transform: rotate(0deg);
         transform: rotate(0deg);
       }
+
       100% {
         -webkit-transform: rotate(360deg);
         -ms-transform: rotate(360deg);
@@ -215,57 +369,66 @@
     $thickness: 0.5em;
 
     // Calculated variables.
-    $lat: ($size - $thickness) / 2;
+    $lat: (
+      $size - $thickness) / 2;
     $offset: $lat - $thickness;
 
     .loader {
       position: relative;
       width: $size;
       height: $size;
-      transform: rotate(165deg);
+      transform: rotate(165deg
+      );
 
-      &:before,
-      &:after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        display: block;
-        width: $thickness;
-        height: $thickness;
-        border-radius: $thickness / 2;
-        transform: translate(-50%, -50%);
-      }
+    &:before,
+    &:after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: block;
+      width: $thickness;
+      height: $thickness;
+      border-radius: $thickness / 2;
+      transform: translate(-50%, -50%);
+    }
 
-      &:before {
-        animation: before 2s infinite;
-      }
+    &:before {
+      animation: before 2s infinite;
+    }
 
-      &:after {
-        animation: after 2s infinite;
-      }
+    &:after {
+      animation: after 2s infinite;
+    }
     }
 
     @keyframes before {
       0% {
         width: $thickness;
-        box-shadow: $lat (-$offset) nth($colors, 1),
-          (-$lat) $offset nth($colors, 3);
-      }
-      35% {
-        width: $size;
-        box-shadow: 0 (-$offset) nth($colors, 1),
+        box-shadow: $lat (
+          -$offset) nth($colors, 1),
+          (-$lat) $offset nth($colors, 3
+        );
+    }
+
+    35% {
+      width: $size;
+      box-shadow: 0 (-$offset) nth($colors, 1),
         0 $offset nth($colors, 3);
-      }
-      70% {
-        width: $thickness;
-        box-shadow: (-$lat) (-$offset) nth($colors, 1),
+    }
+
+    70% {
+      width: $thickness;
+      box-shadow: (-$lat) (-$offset) nth($colors, 1),
         $lat $offset nth($colors, 3);
-      }
-      100% {
-        box-shadow: $lat (-$offset) nth($colors, 1),
-          (-$lat) $offset nth($colors, 3);
-      }
+    }
+
+    100% {
+      box-shadow: $lat (
+        -$offset) nth($colors, 1),
+        (-$lat) $offset nth($colors, 3
+      );
+    }
     }
 
     @keyframes after {
@@ -274,20 +437,25 @@
         box-shadow: $offset $lat nth($colors, 2),
           (-$offset) (-$lat) nth($colors, 4);
       }
+
       35% {
         height: $size;
         box-shadow: $offset 0 nth($colors, 2),
           (-$offset) 0 nth($colors, 4);
       }
+
       70% {
         height: $thickness;
-        box-shadow: $offset (-$lat) nth($colors, 2),
-          (-$offset) $lat nth($colors, 4);
-      }
-      100% {
-        box-shadow: $offset $lat nth($colors, 2),
-          (-$offset) (-$lat) nth($colors, 4);
-      }
+        box-shadow: $offset (
+          -$lat) nth($colors, 2),
+          (-$offset) $lat nth($colors, 4
+        );
+    }
+
+    100% {
+      box-shadow: $offset $lat nth($colors, 2),
+        (-$offset) (-$lat) nth($colors, 4);
+    }
     }
 
     .loader {
@@ -295,138 +463,142 @@
       top: calc(50% - #{$size / 2});
       left: calc(50% - #{$size / 2});
     }
-
   </style>
 </head>
+
 <body>
-<div id="pedestal">
-  <div id="loader-wrapper">
-    <div class="loader"></div>
-    <!--		    <div class="loader-section section-left"></div>-->
-    <!--		    <div class="loader-section section-right"></div>-->
-    <!--		    <div class="load_title">正在加载系统资源，请耐心等待</div>-->
-  </div>
-  <script>
-    var SYSTEM_MATH_DECIMAL = 6
-    //函数部分
-    //对数:
-    function getLogValue(x, y) {
-      if (y) {
-        return dynamicFormulaRound(Math.log(y) / Math.log(x), SYSTEM_MATH_DECIMAL)
+  <div id="pedestal">
+    <div id="loader-wrapper">
+      <div class="loader"></div>
+      <!--		    <div class="loader-section section-left"></div>-->
+      <!--		    <div class="loader-section section-right"></div>-->
+      <!--		    <div class="load_title">正在加载系统资源，请耐心等待</div>-->
+    </div>
+    <script>
+      var SYSTEM_MATH_DECIMAL = 6
+      //函数部分
+      //对数:
+      function getLogValue(x, y) {
+        if (y) {
+          return dynamicFormulaRound(Math.log(y) / Math.log(x), SYSTEM_MATH_DECIMAL)
+        }
+        return dynamicFormulaRound(Math.log(x), SYSTEM_MATH_DECIMAL)
       }
-      return dynamicFormulaRound(Math.log(x), SYSTEM_MATH_DECIMAL)
-    }
 
-    //幂函数
-    function getPowValue(x, y) {
-      return dynamicFormulaRound(Math.pow(x, y), SYSTEM_MATH_DECIMAL)
-    }
-
-    //开根函数
-    function getRadicalValue(x, y) {
-      if (y) {
-        dynamicFormulaRound(Math.pow(x, 1 / y), SYSTEM_MATH_DECIMAL)
+      //幂函数
+      function getPowValue(x, y) {
+        return dynamicFormulaRound(Math.pow(x, y), SYSTEM_MATH_DECIMAL)
       }
-      return dynamicFormulaRound(Math.pow(x, 1 / 2), SYSTEM_MATH_DECIMAL)
-    }
 
-    //绝对值
-    function getAbsValue(x) {
-      return Math.abs(x)
-    }
-
-    //平均数
-    function getAvgValue() {
-      let arr = []
-      for (let i in arguments) {
-        if (typeof (arguments[i]) === 'number' || typeof (arguments[i]) === 'string') {
-          arr.push(arguments[i])
+      //开根函数
+      function getRadicalValue(x, y) {
+        if (y) {
+          dynamicFormulaRound(Math.pow(x, 1 / y), SYSTEM_MATH_DECIMAL)
         }
+        return dynamicFormulaRound(Math.pow(x, 1 / 2), SYSTEM_MATH_DECIMAL)
       }
-      console.log('getAvgValue', arr)
-      if (arr.length > 0) {
-        let sum = 0
-        arr.forEach(item => {
-          sum += item
-        })
-        return dynamicFormulaRound(sum / arr.length, SYSTEM_MATH_DECIMAL)
-      }
-      return 0
-    }
-    //最大值
-    function getMaxValue(){
-        let arr = [];
-        for(let i in arguments){
-            if (typeof(arguments[i]) === 'number' || typeof(arguments[i]) === 'string'){
-                arr.push(arguments[i]);
-            }
-        }
-        console.log('getMaxValue', arr);
-        if(arr.length > 0){
-            return Math.max(...arr);
-        }
-        return 0;
-    }
-    //最小值
-    function getMinValue(){
-        let arr = [];
-        for(let i in arguments){
-            if (typeof(arguments[i]) === 'number' || typeof(arguments[i]) === 'string'){
-                arr.push(arguments[i]);
-            }
-        }
-        console.log('getMinValue', arr);
-        if(arr.length > 0){
-            return Math.min(...arr);
-        }
-        return 0;
-    }
 
-    /**
-     * 四舍五入
-     * @param  {[type]} num     [待处理数字]
-     * @param  {[type]} decimal [需要保留的小数位]
-     * @return {[type]}         []
-     */
-    function dynamicFormulaRound(num, decimal) {
-      if (isNaN(num)) {
+      //绝对值
+      function getAbsValue(x) {
+        return Math.abs(x)
+      }
+
+      //平均数
+      function getAvgValue() {
+        let arr = []
+        for (let i in arguments) {
+          if (typeof (arguments[i]) === 'number' || typeof (arguments[i]) === 'string') {
+            arr.push(arguments[i])
+          }
+        }
+        console.log('getAvgValue', arr)
+        if (arr.length > 0) {
+          let sum = 0
+          arr.forEach(item => {
+            sum += item
+          })
+          return dynamicFormulaRound(sum / arr.length, SYSTEM_MATH_DECIMAL)
+        }
         return 0
       }
-      const p1 = Math.pow(10, decimal + 1)
-      const p2 = Math.pow(10, decimal)
-      return Math.round(num * p1 / 10) / p2
-    }
-
-    function dateFormat(format, date) {
-      var o = {
-        'M+': date.getMonth() + 1, //month
-        'd+': date.getDate(),    //day
-        'h+': date.getHours(),   //hour
-        'm+': date.getMinutes(), //minute
-        's+': date.getSeconds(), //second
-        'q+': Math.floor((date.getMonth() + 3) / 3),  //quarter
-        'S': date.getMilliseconds() //millisecond
-      }
-      if (/(y+)/.test(format)) {
-        format = format.replace(RegExp.$1,
-          (date.getFullYear() + '').substr(4 - RegExp.$1.length))
-      }
-      for (var k in o) {
-        if (new RegExp('(' + k + ')').test(format)) {
-          format = format.replace(RegExp.$1,
-            RegExp.$1.length == 1 ? o[k] :
-              ('00' + o[k]).substr(('' + o[k]).length))
+      //最大值
+      function getMaxValue() {
+        let arr = [];
+        for (let i in arguments) {
+          if (typeof (arguments[i]) === 'number' || typeof (arguments[i]) === 'string') {
+            arr.push(arguments[i]);
+          }
         }
+        console.log('getMaxValue', arr);
+        if (arr.length > 0) {
+          return Math.max(...arr);
+        }
+        return 0;
       }
-      return format
-    }
+      //最小值
+      function getMinValue() {
+        let arr = [];
+        for (let i in arguments) {
+          if (typeof (arguments[i]) === 'number' || typeof (arguments[i]) === 'string') {
+            arr.push(arguments[i]);
+          }
+        }
+        console.log('getMinValue', arr);
+        if (arr.length > 0) {
+          return Math.min(...arr);
+        }
+        return 0;
+      }
 
-    function refreshReport() {
-      console.log(1111);
-      console.log(window.thisComponent);
-      window.thisComponent.refreshReport()
-    }
-  </script>
-</div>
+      function LOGIC_IF(test, value1, value2) {
+        return test ? value1 : value2;
+      }
+
+      /**
+       * 四舍五入
+       * @param  {[type]} num     [待处理数字]
+       * @param  {[type]} decimal [需要保留的小数位]
+       * @return {[type]}         []
+       */
+      function dynamicFormulaRound(num, decimal) {
+        if (isNaN(num)) {
+          return 0
+        }
+        const p1 = Math.pow(10, decimal + 1)
+        const p2 = Math.pow(10, decimal)
+        return Math.round(num * p1 / 10) / p2
+      }
+
+      function dateFormat(format, date) {
+        var o = {
+          'M+': date.getMonth() + 1, //month
+          'd+': date.getDate(),    //day
+          'h+': date.getHours(),   //hour
+          'm+': date.getMinutes(), //minute
+          's+': date.getSeconds(), //second
+          'q+': Math.floor((date.getMonth() + 3) / 3),  //quarter
+          'S': date.getMilliseconds() //millisecond
+        }
+        if (/(y+)/.test(format)) {
+          format = format.replace(RegExp.$1,
+            (date.getFullYear() + '').substr(4 - RegExp.$1.length))
+        }
+        for (var k in o) {
+          if (new RegExp('(' + k + ')').test(format)) {
+            format = format.replace(RegExp.$1,
+              RegExp.$1.length == 1 ? o[k] :
+                ('00' + o[k]).substr(('' + o[k]).length))
+          }
+        }
+        return format
+      }
+
+      function refreshReport() {
+        console.log('ELN调用触发')
+        window.thisComponent.refreshReport()
+      }
+    </script>
+  </div>
 </body>
+
 </html>

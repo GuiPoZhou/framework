@@ -1,15 +1,31 @@
 <template>
   <widgetEditContainer>
-    <el-form slot="wecLeft" :model="editParams" label-position="top" ref="editParams" label-width="130px"
-      class="demo-ruleForm">
+    <el-form
+      slot="wecLeft"
+      :model="editParams"
+      label-position="top"
+      ref="editParams"
+      label-width="130px"
+      class="demo-ruleForm"
+    >
       <el-col :span="12">
-        <el-form-item label="日期框标题" prop="title" :rules="[{ required: true, message: '请输入日期框标题', trigger: 'blur' }]">
+        <el-form-item
+          label="日期框标题"
+          prop="title"
+          :rules="[
+            { required: true, message: '请输入日期框标题', trigger: 'blur' },
+          ]"
+        >
           <el-input v-model="editParams.title"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="占据的列数" prop="colSpan">
-          <el-input-number v-model="editParams.colSpan" :min="4" :max="24"></el-input-number>
+          <el-input-number
+            v-model="editParams.colSpan"
+            :min="4"
+            :max="24"
+          ></el-input-number>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -21,8 +37,26 @@
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="绑定值(vModel)" prop="vModel" :rules="[{ required: true, message: '请输入绑定值', trigger: 'blur' }]">
-          <el-input v-model="editParams.vModel"></el-input>
+        <el-form-item label="尺寸" prop="size">
+          <el-select v-model="editParams.size">
+            <el-option label="默认" value="-"></el-option>
+            <el-option label="中等" value="medium"></el-option>
+            <el-option label="小型" value="small"></el-option>
+            <el-option label="超小型" value="mini"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item
+          label="绑定值(vModel)"
+          prop="vModel"
+          :rules="[
+            { required: true, message: '请输入绑定值', trigger: 'blur' },
+          ]"
+        >
+          <el-input v-model="editParams.vModel">
+            <el-button slot="append" @click="e_selDbTable">选择</el-button>
+          </el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -30,8 +64,12 @@
           <el-select v-model="editParams.vModelType">
             <el-option label="固定参数" value="fixed"></el-option>
             <el-option label="扩展参数" value="ext"></el-option>
-
           </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="主表名称" prop="tableName">
+          <el-input v-model="editParams.tableName"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -56,8 +94,17 @@
         </el-form-item>
       </el-col>
       <el-col :span="12" v-if="editParams.rules.isValidate">
-        <el-form-item label="表单验证提示语" prop="rules.validateTitle"
-          :rules="[{ required: true, message: '请输入表单验证提示语', trigger: 'blur' }]">
+        <el-form-item
+          label="表单验证提示语"
+          prop="rules.validateTitle"
+          :rules="[
+            {
+              required: true,
+              message: '请输入表单验证提示语',
+              trigger: 'blur',
+            },
+          ]"
+        >
           <el-input v-model="editParams.rules.validateTitle"></el-input>
         </el-form-item>
       </el-col>
@@ -66,7 +113,6 @@
           <el-select v-model="editParams.disabled">
             <el-option label="是" :value="true"></el-option>
             <el-option label="否" :value="false"></el-option>
-
           </el-select>
         </el-form-item>
       </el-col>
@@ -98,8 +144,14 @@
       <el-col :span="12">
         <el-form-item label="显示日期格式" prop="format">
           <el-select v-model="editParams.format">
-            <el-option label="yyyy-MM-dd HH:mm:ss" value="yyyy-MM-dd HH:mm:ss"></el-option>
-            <el-option label="yyyy-MM-dd HH:mm" value="yyyy-MM-dd HH:mm"></el-option>
+            <el-option
+              label="yyyy-MM-dd HH:mm:ss"
+              value="yyyy-MM-dd HH:mm:ss"
+            ></el-option>
+            <el-option
+              label="yyyy-MM-dd HH:mm"
+              value="yyyy-MM-dd HH:mm"
+            ></el-option>
             <el-option label="yyyy-MM-dd" value="yyyy-MM-dd"></el-option>
             <el-option label="yyyy" value="yyyy"></el-option>
             <el-option label="yyyy 第 WW 周" value="yyyy 第 WW 周"></el-option>
@@ -109,18 +161,39 @@
       <el-col :span="12">
         <el-form-item label="绑定值格式" prop="valueFormat">
           <el-select v-model="editParams.valueFormat">
-            <el-option label="yyyy-MM-dd HH:mm:ss" value="yyyy-MM-dd HH:mm:ss"></el-option>
-            <el-option label="yyyy-MM-dd HH:mm" value="yyyy-MM-dd HH:mm"></el-option>
+            <el-option
+              label="yyyy-MM-dd HH:mm:ss"
+              value="yyyy-MM-dd HH:mm:ss"
+            ></el-option>
+            <el-option
+              label="yyyy-MM-dd HH:mm"
+              value="yyyy-MM-dd HH:mm"
+            ></el-option>
             <el-option label="yyyy-MM-dd" value="yyyy-MM-dd"></el-option>
             <el-option label="yyyy" value="yyyy"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
-      <el-col :span="12"
-        v-if="editParams.type == 'datetimerange' || editParams.type == 'daterange' || editParams.type == 'monthrange'">
+      <el-col
+        :span="12"
+        v-if="
+          editParams.type == 'datetimerange' ||
+          editParams.type == 'daterange' ||
+          editParams.type == 'monthrange'
+        "
+      >
         <el-form-item label="选中日期后的默认具体时刻" prop="defaultTime">
           <el-input v-model="editParams.defaultTime" readonly>
             <el-button slot="append" @click="e_editdefaultTime">编辑</el-button>
+          </el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="禁用脚本" prop="events.disabledCode">
+          <el-input v-model="editParams.events.disabledCode" readonly>
+            <el-button slot="append" size="small" @click="e_editDisabledCode"
+              >编辑</el-button
+            >
           </el-input>
         </el-form-item>
       </el-col>
@@ -134,65 +207,97 @@
       <el-col :span="12">
         <el-form-item label="PickerOptionsCode" prop="pickerOptions">
           <el-input v-model="editParams.pickerOptions" readonly>
-            <el-button slot="append" @click="e_editpickerOptions">编辑</el-button>
+            <el-button slot="append" @click="e_editpickerOptions"
+              >编辑</el-button
+            >
           </el-input>
         </el-form-item>
       </el-col>
     </el-form>
-    <KevinEditors slot="wecRight" ref="KevinEditors" @input="handleEditorInput" />
+    <KevinEditors
+      slot="wecRight"
+      ref="KevinEditors"
+      @input="handleEditorInput"
+    />
   </widgetEditContainer>
 </template>
 <script>
-import widgetEditContainer from '../components/widgetEditContainer.vue'
-import KevinEditors from '../../../../../../KevinEditor/index'
+import widgetEditContainer from "../components/widgetEditContainer.vue";
+import KevinEditors from "../../../../../../KevinEditor/index";
 export default {
   components: {
     widgetEditContainer,
-    KevinEditors
+    KevinEditors,
   },
   data() {
     return {
       showdefaultTime: false,
       editParams: {
         rules: {
-          isValidate: false
+          isValidate: false,
         },
-        events: {}
+        events: {},
       },
       editType: "",
-      defaultTime: '',
-    }
+      defaultTime: "",
+    };
   },
 
   methods: {
+    setDbTable(params) {
+      this.editParams.vModel = params.keyName;
+      this.editParams.vModelType = params.type;
+      this.editParams.tableName = params.tableName;
+    },
+    e_selDbTable() {
+      this.$emit("selDBTable");
+    },
     e_selectType() {
-      if (this.editParams.type == 'datetimerange' || this.editParams.type == 'daterange' || this.editParams.type == 'monthrange') {
-        this.showdefaultTime = true
-        this.editParams.defaultTime = this.defaultTime
+      if (
+        this.editParams.type == "datetimerange" ||
+        this.editParams.type == "daterange" ||
+        this.editParams.type == "monthrange"
+      ) {
+        this.showdefaultTime = true;
+        this.editParams.defaultTime = this.defaultTime;
       } else {
-        this.showdefaultTime = false
-        this.editParams.defaultTime = "(function statusForEdit() { return '-'; })();"
+        this.showdefaultTime = false;
+        this.editParams.defaultTime =
+          "(function statusForEdit() { return '-'; })();";
       }
     },
     e_editdefaultTime() {
-      this.editType = 'defaultTime'
-      this.$refs.KevinEditors.changeEditor({ value: this.editParams.defaultTime || "(function defaultTime() { var date = new Date(); var hour = date.getHours(); var minute = date.getMinutes(); var second = date.getSeconds(); let time = []; time.push('00:00:00'); time.push('23:59:59'); return time; })(); " });
-
+      this.editType = "defaultTime";
+      this.$refs.KevinEditors.changeEditor({
+        value:
+          this.editParams.defaultTime ||
+          "(function defaultTime() { var date = new Date(); var hour = date.getHours(); var minute = date.getMinutes(); var second = date.getSeconds(); let time = []; time.push('00:00:00'); time.push('23:59:59'); return time; })(); ",
+      });
     },
     e_editpickerOptions() {
-      this.editType = 'pickerOptions'
-      this.$refs.KevinEditors.changeEditor({ value: this.editParams.pickerOptions });
+      this.editType = "pickerOptions";
+      this.$refs.KevinEditors.changeEditor({
+        value: this.editParams.pickerOptions,
+      });
+    },
+    e_editDisabledCode() {
+      this.editType = "disabledCode";
+      this.$refs.KevinEditors.changeEditor({
+        value: this.editParams.events.disabledCode || "return false",
+      });
     },
     e_editChange() {
-      this.editType = 'change'
-      this.$refs.KevinEditors.changeEditor({ value: this.editParams.events.change });
+      this.editType = "change";
+      this.$refs.KevinEditors.changeEditor({
+        value: this.editParams.events.change,
+      });
     },
     formatCode(code) {
       // 去除开头和结尾的空白字符
       code = code.trim();
 
       // 在大括号前后添加空格
-      code = code.replace(/\s*{\s*/g, ' { ').replace(/\s*}\s*/g, ' } ');
+      code = code.replace(/\s*{\s*/g, " { ").replace(/\s*}\s*/g, " } ");
 
       // 在逗号前后添加空格
       // code = code.replace(/,(\S)/g, ', $1');
@@ -201,30 +306,36 @@ export default {
       return code;
     },
     handleEditorInput(code) {
-      if (this.editType == 'change') {
-        this.$set(this.editParams.events, 'change', this.formatCode(code))
-      } else if (this.editType == 'defaultTime') {
-        this.$set(this.editParams, 'defaultTime', this.formatCode(code))
-        this.defaultTime = this.formatCode(code)
-      } else if (this.editType == 'pickerOptions') {
-        this.$set(this.editParams, 'pickerOptions', this.formatCode(code))
+      if (this.editType == "change") {
+        this.$set(this.editParams.events, "change", this.formatCode(code));
+      } else if (this.editType == "defaultTime") {
+        this.$set(this.editParams, "defaultTime", this.formatCode(code));
+        this.defaultTime = this.formatCode(code);
+      } else if (this.editType == "pickerOptions") {
+        this.$set(this.editParams, "pickerOptions", this.formatCode(code));
+      } else if (this.editType == "disabledCode") {
+        this.$set(
+          this.editParams.events,
+          "disabledCode",
+          this.formatCode(code)
+        );
       }
     },
     e_save() {
-      this.$refs.editParams.validate(v => {
+      this.$refs.editParams.validate((v) => {
         if (v) {
-          this.$emit('save', this.editParams)
+          this.$emit("save", this.editParams);
         }
-      })
+      });
     },
     init(widgetInfo) {
-      this.editParams = widgetInfo
+      this.editParams = widgetInfo;
       if (!this.editParams.isHide) {
-        this.editParams.isHide = false
+        this.editParams.isHide = false;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 

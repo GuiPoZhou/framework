@@ -5,7 +5,7 @@
             <el-tab-pane v-for="item in list" :key="item.code" :label="item.type" :name="item.code"></el-tab-pane>
         </el-tabs>
         <!-- 到货验收 以编辑的形式来展示 -->
-        <div v-if="context.accepttanceType == 'ARRIVAL_ACCEPTANCE'" class="kda_area">
+        <div v-if="context.accepttanceType == 'ARRIVAL_ACCEPTANCE' && !disabled" class="kda_area">
             <draggable v-model="widgetOptions.dataSource.list" :disabled="false" filter=".forbid" style="width: 100%;"
                 chosen-class="chosen" :force-fallback="true" group="people" :move="onMove">
                 <el-tag :class="item.code == 'ARRIVAL_ACCEPTANCE' ? 'forbid' : ''" effect="dark"
@@ -19,7 +19,7 @@
 
         </div>
         <div class="kda_ctrlarea">
-            <div class="kcl_left" v-if="!context.accepttanceType || activeName == context.accepttanceType">
+            <div class="kcl_left" v-if="(!context.accepttanceType || activeName == context.accepttanceType) && !disabled">
                 <el-button size="small" type="primary" @click="e_selModel">选择模板</el-button>
                 <el-button size="small" type="warning" @click="e_addNewData">新增行</el-button>
             </div>
@@ -28,7 +28,7 @@
                     <span>验收时间:</span>
                     <el-date-picker style="width: 200px;" :disabled="widgetOptions.dataSource.list.filter(item => {
                         return item.code == activeName
-                    })[0].code != this.context.accepttanceType" v-model="widgetOptions.dataSource.list.filter(item => {
+                    })[0].code != this.context.accepttanceType || disabled" v-model="widgetOptions.dataSource.list.filter(item => {
     return item.code == activeName
 })[0].form.inspectDate" size="mini" type="datetime" placeholder="选择日期时间" format="yyyy-MM-dd HH:mm:ss"
                         value-format="yyyy-MM-dd HH:mm:ss">
@@ -41,7 +41,7 @@
                         return item.code == activeName
                     })[0].code == this.context.accepttanceType" v-model="widgetOptions.dataSource.list.filter(item => {
     return item.code == activeName
-})[0].form.inspectResult">
+})[0].form.inspectResult" :disabled="disabled">
                         <el-radio label="通过">通过</el-radio>
                         <el-radio label="不通过">不通过</el-radio>
                     </el-radio-group>
@@ -53,16 +53,17 @@
                     return item.code == activeName
                 })[0].form.inspectResult == '不通过'">
                     <span>不通过原因:</span>
-                    <el-input v-model="widgetOptions.dataSource.list.filter(item => {
+                    <el-input :disabled="disabled" v-model="widgetOptions.dataSource.list.filter(item => {
                         return item.code == activeName
                     })[0].form.inspectReason"></el-input>
                 </div>
             </div>
         </div>
-        <deviceAcceptTable :activeName="activeName" :widgetOptions="widgetOptions" :context="context" :tableColumns="list.filter(item => {
-            return item.code == this.activeName
-        })[0].content.tableColumns
-            " :tableData="list.filter(item => {
+        <deviceAcceptTable :disabled="disabled" :activeName="activeName" :widgetOptions="widgetOptions" :context="context"
+            :tableColumns="list.filter(item => {
+                return item.code == this.activeName
+            })[0].content.tableColumns
+                " :tableData="list.filter(item => {
         return item.code == this.activeName
     })[0].content.tableData
         " :tableActions="list.filter(item => {
@@ -87,6 +88,10 @@ export default {
         selAcceptTableModel
     },
     props: {
+        disabled: {
+            typeof: Boolean,
+            default: false
+        },
         widgetOptions: Object,
         context: Object
     },
@@ -250,6 +255,11 @@ export default {
                     return item.code == 'ARRIVAL_ACCEPTANCE'
                 })
                 arr.unshift(ARRIVAL_ACCEPTANCEInfo[0])
+                if (this.context.form.requireMetrologyAcceptance == 0) {
+                    arr = arr.filter(item => {
+                        return item.code != 'METROLOGY_ACCEPTANCE'
+                    })
+                }
                 this.$emit('refresh', arr)
             })
         },

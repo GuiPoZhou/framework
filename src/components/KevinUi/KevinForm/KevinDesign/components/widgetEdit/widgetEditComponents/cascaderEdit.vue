@@ -1,160 +1,303 @@
 <template>
-    <div class="selectEditArea">
-        <div class="s_e_a_left">
-            <el-form :model="editParams" ref="editParams" label-width="130px" class="demo-ruleForm" label-position="top">
-                <el-divider>级联组件基本属性</el-divider>
-                <el-row>
-                    <el-col :span="12">
-                        <el-form-item label="选择框标题" prop="title"
-                            :rules="[{ required: true, message: '请输入选择框标题', trigger: 'blur' }]">
-                            <el-input v-model="editParams.title"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="占据的列数" prop="colSpan">
-                            <el-input-number v-model="editParams.colSpan" :min="4" :max="24"></el-input-number>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="绑定值(vModel)" prop="vModel"
-                            :rules="[{ required: true, message: '请输入绑定值', trigger: 'blur' }]">
-                            <el-input v-model="editParams.vModel"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="绑定值类型(vModelType)" prop="vModelType">
-                            <el-select v-model="editParams.vModelType">
-                                <el-option label="固定参数" value="fixed"></el-option>
-                                <el-option label="扩展参数" value="ext"></el-option>
+  <div class="selectEditArea">
+    <div class="s_e_a_left">
+      <el-form
+        :model="editParams"
+        ref="editParams"
+        label-width="130px"
+        class="demo-ruleForm"
+        label-position="top"
+      >
+        <el-divider>级联组件基本属性</el-divider>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item
+              label="选择框标题"
+              prop="title"
+              :rules="[
+                {
+                  required: true,
+                  message: '请输入选择框标题',
+                  trigger: 'blur',
+                },
+              ]"
+            >
+              <el-input v-model="editParams.title"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="占据的列数" prop="colSpan">
+              <el-input-number
+                v-model="editParams.colSpan"
+                :min="4"
+                :max="24"
+              ></el-input-number>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="绑定值(vModel)"
+              prop="vModel"
+              :rules="[
+                { required: true, message: '请输入绑定值', trigger: 'blur' },
+              ]"
+            >
+              <el-input v-model="editParams.vModel">
+                <el-button slot="append" @click="e_selDbTable">选择</el-button>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="绑定值类型(vModelType)" prop="vModelType">
+              <el-select v-model="editParams.vModelType">
+                <el-option label="固定参数" value="fixed"></el-option>
+                <el-option label="扩展参数" value="ext"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="主表名称" prop="tableName">
+              <el-input v-model="editParams.tableName"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="占位文本(placeholder)" prop="placeholder">
+              <el-input v-model="editParams.placeholder"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="尺寸" prop="size">
+              <el-select v-model="editParams.size">
+                <el-option label="默认" value="-"></el-option>
+                <el-option label="中等" value="medium"></el-option>
+                <el-option label="小型" value="small"></el-option>
+                <el-option label="超小型" value="mini"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否默认隐藏" prop="isHide">
+              <el-select v-model="editParams.isHide">
+                <el-option label="是" :value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="选中节点是否为数组(emitPath)" prop="props.emitPath">
+              <el-select v-model="editParams.props.emitPath">
+                <el-option label="是" :value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否显示完整路径" prop="showAllLevels">
+              <el-select v-model="editParams.showAllLevels">
+                <el-option label="是" :value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否可清空" prop="clearable">
+              <el-select v-model="editParams.clearable">
+                <el-option label="是" :value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否默认禁用" prop="disabled">
+              <el-select v-model="editParams.disabled">
+                <el-option label="是" :value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否必填" prop="rules.isValidate">
+              <el-select v-model="editParams.rules.isValidate">
+                <el-option label="是" :value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="editParams.rules.isValidate">
+            <el-form-item label="表单验证触发方式" prop="rules.validateType">
+              <el-select v-model="editParams.rules.validateType">
+                <el-option label="Blur" value="blur"></el-option>
+                <el-option label="Change" value="change"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="editParams.rules.isValidate">
+            <el-form-item
+              label="表单验证提示语"
+              prop="rules.validateTitle"
+              :rules="[
+                {
+                  required: true,
+                  message: '请输入表单验证提示语',
+                  trigger: 'blur',
+                },
+              ]"
+            >
+              <el-input v-model="editParams.rules.validateTitle"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否支持多选" prop="props.multiple">
+              <el-select v-model="editParams.props.multiple">
+                <el-option label="是" :value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="父子节点不关联" prop="props.checkStrictly">
+              <el-select v-model="editParams.props.checkStrictly">
+                <el-option label="是" :value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="选项的标签属性值"
+              prop="props.label"
+              :rules="[
+                { required: true, message: '请输入内容', trigger: 'blur' },
+              ]"
+            >
+              <el-input v-model="editParams.props.label"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="选项的值属性值"
+              prop="props.value"
+              :rules="[
+                { required: true, message: '请输入内容', trigger: 'blur' },
+              ]"
+            >
+              <el-input v-model="editParams.props.value"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="选项的子选项属性值"
+              prop="props.children"
+              :rules="[
+                { required: true, message: '请输入内容', trigger: 'blur' },
+              ]"
+            >
+              <el-input v-model="editParams.props.children"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否可搜索" prop="filterable">
+              <el-select v-model="editParams.filterable">
+                <el-option label="是" :value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="开启懒加载" prop="props.lazy">
+              <el-select v-model="editParams.props.lazy">
+                <el-option label="是" :value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="editParams.props.lazy">
+            <el-form-item label="脚本懒加载" prop="props.lazyLoad">
+              <el-input v-model="editParams.props.lazyLoad" readonly>
+                <el-button slot="append" size="small" @click="e_editlazyLoad"
+                  >编辑</el-button
+                >
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-divider>级联组件数据源配置</el-divider>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item
+              label="获取远程数据脚本"
+              prop="options.optionsGetEvents"
+            >
+              <el-input v-model="editParams.options.optionsGetEvents" readonly>
+                <el-button
+                  slot="append"
+                  size="small"
+                  @click="e_editSelectServerEvents"
+                  >编辑</el-button
+                >
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="远程脚本执行方式"
+              prop="options.executionMethod"
+            >
+              <el-select v-model="editParams.options.executionMethod">
+                <el-option label="自动执行" value="auto"></el-option>
+                <el-option label="被动执行" value="manually"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" style="margin-bottom: 0.3rem">
+            <el-button
+              size="mini"
+              type="success"
+              @click="e_tastOptionsGetEvents"
+              >远程脚本测试</el-button
+            >
+          </el-col>
+          <el-col :span="24">
+            <el-table
+              :data="editParams.options.list"
+              style="width: 100%"
+              border
+            >
+              <el-table-column prop="label" label="标题(label)" align="center">
+              </el-table-column>
+              <el-table-column prop="value" label="值(value)" align="center">
+              </el-table-column>
+            </el-table>
+          </el-col>
+        </el-row>
 
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="占位文本(placeholder)" prop="placeholder">
-                            <el-input v-model="editParams.placeholder"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="是否默认隐藏" prop="isHide">
-                            <el-select v-model="editParams.isHide">
-                                <el-option label="是" :value="true"></el-option>
-                                <el-option label="否" :value="false"></el-option>
-
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="是否显示完整路径" prop="showAllLevels">
-                            <el-select v-model="editParams.showAllLevels">
-                                <el-option label="是" :value="true"></el-option>
-                                <el-option label="否" :value="false"></el-option>
-
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="是否可清空" prop="clearable">
-                            <el-select v-model="editParams.clearable">
-                                <el-option label="是" :value="true"></el-option>
-                                <el-option label="否" :value="false"></el-option>
-
-                            </el-select>
-
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="是否默认禁用" prop="disabled">
-                            <el-select v-model="editParams.disabled">
-                                <el-option label="是" :value="true"></el-option>
-                                <el-option label="否" :value="false"></el-option>
-
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="是否必填" prop="rules.isValidate">
-                            <el-select v-model="editParams.rules.isValidate">
-                                <el-option label="是" :value="true"></el-option>
-                                <el-option label="否" :value="false"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12" v-if="editParams.rules.isValidate">
-                        <el-form-item label="表单验证触发方式" prop="rules.validateType">
-                            <el-select v-model="editParams.rules.validateType">
-                                <el-option label="Blur" value="blur"></el-option>
-                                <el-option label="Change" value="change"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12" v-if="editParams.rules.isValidate">
-                        <el-form-item label="表单验证提示语" prop="rules.validateTitle"
-                            :rules="[{ required: true, message: '请输入表单验证提示语', trigger: 'blur' }]">
-                            <el-input v-model="editParams.rules.validateTitle"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="是否支持多选" prop="props.multiple">
-                            <el-select v-model="editParams.props.multiple">
-                                <el-option label="是" :value="true"></el-option>
-                                <el-option label="否" :value="false"></el-option>
-
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="是否可搜索" prop="filterable">
-                            <el-select v-model="editParams.filterable">
-                                <el-option label="是" :value="true"></el-option>
-                                <el-option label="否" :value="false"></el-option>
-
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-divider>级联组件数据源配置</el-divider>
-                <el-row>
-                    <el-col :span="12">
-                        <el-form-item label="获取远程数据脚本" prop="options.optionsGetEvents">
-                            <el-input v-model="editParams.options.optionsGetEvents" readonly>
-                                <el-button slot="append" size="small" @click="e_editSelectServerEvents">编辑</el-button>
-                            </el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="远程脚本执行方式" prop="options.executionMethod">
-                            <el-select v-model="editParams.options.executionMethod">
-                                <el-option label="自动执行" value="auto"></el-option>
-                                <el-option label="被动执行" value="manually"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12" style="margin-bottom: 0.3rem;">
-                        <el-button size="mini" type="success" @click="e_tastOptionsGetEvents">远程脚本测试</el-button>
-                    </el-col>
-                    <el-col :span="24">
-                        <el-table :data="editParams.options.list" style="width: 100%" border>
-                            <el-table-column prop="label" label="标题(label)" align="center">
-                            </el-table-column>
-                            <el-table-column prop="value" label="值(value)" align="center">
-                            </el-table-column>
-                        </el-table>
-                    </el-col>
-
-
-                </el-row>
-
-                <el-divider>级联组件事件</el-divider>
-                <el-row>
-                    <el-col :span="12">
-                        <el-form-item label="Change" prop="events.change">
-                            <el-input v-model="editParams.events.change" readonly>
-                                <el-button slot="append" size="small" @click="e_editSelectEvents('change')">编辑</el-button>
-                            </el-input>
-                        </el-form-item>
-                    </el-col>
-                    <!-- <el-col :span="12" v-if="editParams.multiple">
+        <el-divider>级联组件事件</el-divider>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="禁用脚本" prop="events.disabledCode">
+              <el-input v-model="editParams.events.disabledCode" readonly>
+                <el-button
+                  slot="append"
+                  size="small"
+                  @click="e_editSelectEvents('disabledCode')"
+                  >编辑</el-button
+                >
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Change" prop="events.change">
+              <el-input v-model="editParams.events.change" readonly>
+                <el-button
+                  slot="append"
+                  size="small"
+                  @click="e_editSelectEvents('change')"
+                  >编辑</el-button
+                >
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <!-- <el-col :span="12" v-if="editParams.multiple">
                         <el-form-item label="多选模式下移除tag时触发" prop="events.removeTag">
                             <el-input v-model="editParams.events.removeTag" readonly>
                                 <el-button slot="append" size="small"
@@ -162,148 +305,176 @@
                             </el-input>
                         </el-form-item>
                     </el-col> -->
-                </el-row>
-
-
-            </el-form>
-        </div>
-        <div class="s_e_a_right">
-            <KevinEditors ref="KevinEditors" @input="handleEditorInput" />
-        </div>
+        </el-row>
+      </el-form>
     </div>
+    <div class="s_e_a_right">
+      <KevinEditors ref="KevinEditors" @input="handleEditorInput" />
+    </div>
+  </div>
 </template>
 
 <script>
-import KevinEditors from '../../../../../../KevinEditor/index'
+import KevinEditors from "../../../../../../KevinEditor/index";
 
 export default {
-    components: {
-        KevinEditors
+  components: {
+    KevinEditors,
+  },
+  data() {
+    return {
+      editParams: {
+        rules: {
+          isValidate: false,
+        },
+        slot: {
+          isSlot: false,
+        },
+        props: {},
+        options: {},
+        events: {},
+      },
+      editType: "",
+    };
+  },
+  methods: {
+    setDbTable(params) {
+      this.editParams.vModel = params.keyName;
+      this.editParams.vModelType = params.type;
+      this.editParams.tableName = params.tableName;
     },
-    data() {
-        return {
-            editParams: {
-                rules: {
-                    isValidate: false
-                },
-                slot: {
-                    isSlot: false
-                },
-                props: {},
-                options: {},
-                events:{}
-            },
-            editType: ''
-        }
+    e_selDbTable() {
+      this.$emit("selDBTable");
     },
-    methods: {
-        handleEditorInput(code) {
-            if (this.editType == 'slotButton') {
-                this.editParams.slot.events.slotButtonEvents = this.formatCode(code)
-            } else if (this.editType == 'slotButtonCallBack') {
-                this.editParams.slot.events.callBackEvents = this.formatCode(code)
-            } else if (this.editType == 'serverDataEvents') {
-                this.editParams.options.optionsGetEvents = this.formatCode(code)
-            } else {
-                this.editParams.events[this.editType] = this.formatCode(code)
-            }
-            // this.editParams = {...this.editParams}
-        },
-        formatCode(code) {
-            // 去除开头和结尾的空白字符
-            code = code.trim();
+    handleEditorInput(code) {
+      if (this.editType == "slotButton") {
+        this.editParams.slot.events.slotButtonEvents = this.formatCode(code);
+      } else if (this.editType == "slotButtonCallBack") {
+        this.editParams.slot.events.callBackEvents = this.formatCode(code);
+      } else if (this.editType == "serverDataEvents") {
+        this.editParams.options.optionsGetEvents = this.formatCode(code);
+      } else if (this.editType == "lazyLoad") {
+        this.editParams.props.lazyLoad = this.formatCode(code);
+      } else {
+        this.editParams.events[this.editType] = this.formatCode(code);
+      }
+      // this.editParams = {...this.editParams}
+    },
+    formatCode(code) {
+      // 去除开头和结尾的空白字符
+      code = code.trim();
 
-            // 在大括号前后添加空格
-            code = code.replace(/\s*{\s*/g, ' { ').replace(/\s*}\s*/g, ' } ');
+      // 在大括号前后添加空格
+      // code = code.replace(/\s*{\s*/g, " { ").replace(/\s*}\s*/g, " } ");
 
-            // 在逗号前后添加空格
-            // code = code.replace(/,(\S)/g, ', $1');
+      // 在逗号前后添加空格
+      // code = code.replace(/,(\S)/g, ', $1');
 
-            // 返回格式化后的代码
-            return code;
-        },
-        e_tastOptionsGetEvents() {
-            if (this.editParams.options.optionsGetEvents == '') {
-                this.$message.error('请先编码数据源远程获取脚本')
-                return
-            }
-            new Function('ctx', 'widgetInfo', this.editParams.options.optionsGetEvents)(window.KevinContext, this.editParams)
-        },
-        e_editSelectServerEvents() {
-            this.editType = 'serverDataEvents'
-            this.$refs.KevinEditors.changeEditor({ value: this.editParams.options.optionsGetEvents || "let params = { label: '测试', value: 0, }; widgetInfo.options.list = [params]; " });
-        },
-        e_editSelectEvents(type) {
-            this.editType = type
-            this.$refs.KevinEditors.changeEditor({ value: this.editParams.events[type] || 'console.log("事件")' });
-
-        },
-        e_editSlotButtonCallBackEvents() {
-            this.editType = 'slotButtonCallBack'
-            this.$refs.KevinEditors.changeEditor({ value: this.editParams.slot.events.callBackEvents || 'console.log("插槽按钮回调事件")' });
-
-        },
-        e_editSlotButtonEvents() {
-            this.editType = 'slotButton'
-            this.$refs.KevinEditors.changeEditor({ value: this.editParams.slot.events.slotButtonEvents || 'console.log("插槽按钮事件")' });
-
-        },
-        e_save() {
-            this.$refs.editParams.validate(v => {
-                if (v) {
-                    this.$emit('save', this.editParams)
-                }
-            })
-        },
-        e_close() {
-            this.$emit('close')
-        },
-        init(widgetInfo) {
-            this.editParams = widgetInfo
-            if (!this.editParams.isHide) {
-                this.editParams.isHide = false
-            }
+      // 返回格式化后的代码
+      return code;
+    },
+    e_tastOptionsGetEvents() {
+      if (this.editParams.options.optionsGetEvents == "") {
+        this.$message.error("请先编码数据源远程获取脚本");
+        return;
+      }
+      new Function(
+        "ctx",
+        "widgetInfo",
+        this.editParams.options.optionsGetEvents
+      )(window.KevinContext, this.editParams);
+    },
+    e_editSelectServerEvents() {
+      this.editType = "serverDataEvents";
+      this.$refs.KevinEditors.changeEditor({
+        value:
+          this.editParams.options.optionsGetEvents ||
+          "let params = { label: '测试', value: 0, }; widgetInfo.options.list = [params]; ",
+      });
+    },
+    e_editlazyLoad() {
+      this.editType = "lazyLoad";
+      this.$refs.KevinEditors.changeEditor({
+        value: this.editParams.props.lazyLoad || "return resolve([])",
+      });
+    },
+    e_editSelectEvents(type) {
+      this.editType = type;
+      this.$refs.KevinEditors.changeEditor({
+        value: this.editParams.events[type] || 'console.log("事件",value)',
+      });
+    },
+    e_editSlotButtonCallBackEvents() {
+      this.editType = "slotButtonCallBack";
+      this.$refs.KevinEditors.changeEditor({
+        value:
+          this.editParams.slot.events.callBackEvents ||
+          'console.log("插槽按钮回调事件")',
+      });
+    },
+    e_editSlotButtonEvents() {
+      this.editType = "slotButton";
+      this.$refs.KevinEditors.changeEditor({
+        value:
+          this.editParams.slot.events.slotButtonEvents ||
+          'console.log("插槽按钮事件")',
+      });
+    },
+    e_save() {
+      this.$refs.editParams.validate((v) => {
+        if (v) {
+          this.$emit("save", this.editParams);
         }
-    }
-}
+      });
+    },
+    e_close() {
+      this.$emit("close");
+    },
+    init(widgetInfo) {
+      this.editParams = widgetInfo;
+      if (!this.editParams.isHide) {
+        this.editParams.isHide = false;
+      }
+    },
+  },
+};
 </script>
 <style lang="scss" scoped>
 .selectEditArea {
-    width: 100%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .s_e_a_left {
+    width: 50%;
     height: 100%;
-    overflow: hidden;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+    background-color: #fff;
 
-    .s_e_a_left {
-        width: 50%;
-        height: 100%;
-        background-color: #fff;
+    overflow: auto;
+    padding: 0.7rem;
+    padding-bottom: 3rem;
+    border-radius: 10px;
+    scrollbar-width: none;
+    /* 隐藏标准滚动条（适用于Firefox） */
+    -ms-overflow-style: none;
 
-        overflow: auto;
-        padding: 0.7rem;
-        padding-bottom: 3rem;
-        border-radius: 10px;
-        scrollbar-width: none;
-        /* 隐藏标准滚动条（适用于Firefox） */
-        -ms-overflow-style: none;
-
-        &::-webkit-scrollbar {
-            width: 0;
-            /* 隐藏滚动条（适用于WebKit引擎，如Chrome和Safari） */
-        }
+    &::-webkit-scrollbar {
+      width: 0;
+      /* 隐藏滚动条（适用于WebKit引擎，如Chrome和Safari） */
     }
+  }
 
-    .s_e_a_right {
-        flex: 1;
-        height: 100%;
-        padding: 0.7rem 0;
-        margin-left: 0.7rem;
-        border-radius: 10px;
-        overflow: auto;
-        background-color: #fff;
-    }
-
+  .s_e_a_right {
+    flex: 1;
+    height: 100%;
+    padding: 0.7rem 0;
+    margin-left: 0.7rem;
+    border-radius: 10px;
+    overflow: auto;
+    background-color: #fff;
+  }
 }
 </style>

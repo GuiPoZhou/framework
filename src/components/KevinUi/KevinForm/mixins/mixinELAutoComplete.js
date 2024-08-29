@@ -21,6 +21,7 @@ export default {
                                 <el-autocomplete v-model={this.form[widgetInfo.vModel]}
                                     ref="asd"
                                     disabled={widgetInfo.disabled}
+                                    clearable={widgetInfo.clearable}
                                     trigger-on-focus
                                     fetch-suggestions={(queryString, callback) => {
                                         let ctx = this.context
@@ -28,6 +29,7 @@ export default {
                                         eval(widgetInfo.events.fetchSuggestions)
                                     }}
                                     onSelect={(data) => this.el_autocomplete_select(data, widgetInfo)}
+                                    onClear={() => { this.el_autocomplete_clear(widgetInfo) }}
                                 />
                             </el-form-item> :
                             <el-form-item class={isLangLabel ? "foldLabel" : ''} label={widgetInfo.title} prop={`extData.${widgetInfo.vModel}`}
@@ -37,6 +39,7 @@ export default {
                                 <el-autocomplete v-model={this.form.extData[widgetInfo.vModel]}
                                     ref="asd"
                                     trigger-on-focus
+                                    clearable={widgetInfo.clearable}
                                     disabled={widgetInfo.disabled}
                                     fetch-suggestions={(queryString, callback) => {
                                         let ctx = this.context
@@ -44,6 +47,7 @@ export default {
                                         eval(widgetInfo.events.fetchSuggestions)
                                     }}
                                     onSelect={(data) => this.el_autocomplete_select(data, widgetInfo)}
+                                    onClear={() => { this.el_autocomplete_clear(widgetInfo) }}
                                 />
                             </el-form-item>
                     }
@@ -55,6 +59,10 @@ export default {
                 queryString == undefined ? (queryString = '') : (queryString = queryString);
                 new Function('ctx', '_this', 'widgetInfo', 'queryString', 'callback', widgetInfo.events.fetchSuggestions)(this.context, this, widgetInfo, queryString, callback)
             }
+        },
+        el_autocomplete_clear(widgetInfo) {
+            new Function('ctx', '_this', 'widgetInfo', widgetInfo.events.clear)(this.context, this, widgetInfo)
+
         },
         el_autocomplete_select(data, widgetInfo) {
             new Function('ctx', '_this', 'data', 'widgetInfo', widgetInfo.events.select)(this.context, this, data, widgetInfo)

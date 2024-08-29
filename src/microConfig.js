@@ -5,15 +5,21 @@ import { net } from '@/api/jiaozhengRequest'
 import router from './router'
 import { checkPermi, checkRole } from "@/utils/permission"; //基座向各级子应用传递权限校验工具
 import { loadMicroApp } from 'qiankun';
+import KevinSlotRender from '@/components/KevinUi/KevinForm/KevinSlotRender'
 import KevinEditor from '@/components/KevinEditor'
 import KevinRender from '@/components/KevinUi/KevinForm/kevinRender'
 import KevinLog from '@/components/KevinUi/KevinLog/index'
 import KevinUtil from '@/components/KevinUi/KevinForm/utils/kevinUtils'
+import KevinDrawer from '@/components/KevinUi/KevinDrawer/kevindrawer'
+import widgetEditContainer from '@/components/KevinUi/KevinForm/KevinDesign/components/widgetEdit/components/widgetEditContainer.vue'
 const KevinUtils = KevinUtil
 const MainComponents = {
     KevinEditor,
     KevinRender,
-    KevinLog
+    KevinSlotRender,
+    KevinLog,
+    KevinDrawer,
+    widgetEditContainer
 }
 const commonComponents = {};
 window.commonComponents = commonComponents
@@ -109,6 +115,25 @@ const MicroApps = [
         entry: process.env.NODE_ENV === "production" ? '/subIot/' : `//${window.location.hostname}:7006`,
         container: '#subcontainer',//用于渲染微应用的容器
         activeRule: '/micIot',//activeRule 微应用的激活规则  注意微应用之间该值的唯一性
+        props: {
+            net,
+            request,
+            store, //基座应用向微应用的传递store
+            directive,//共享指令集（权限）
+            checkPermi,
+            checkRole,
+            router,
+            window: window,
+            loadMicroApp,
+            commonComponents
+        }
+    },{
+        title: "环境应用",//微应用中文描述
+        name: 'micEnvExtension',//微应用的name
+        // entry 微应用的入口  开发环境对应微应用的服务  生产环境的对应nginx的代理转发
+        entry: process.env.NODE_ENV === "production" ? '/subEnvExtension/' : `//${window.location.hostname}:7007`,
+        container: '#subcontainer',//用于渲染微应用的容器
+        activeRule: '/micEnvExtension',//activeRule 微应用的激活规则  注意微应用之间该值的唯一性
         props: {
             net,
             request,

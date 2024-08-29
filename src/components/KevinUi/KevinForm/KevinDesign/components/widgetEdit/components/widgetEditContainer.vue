@@ -19,7 +19,7 @@ export default {
         },
         leftWidth: {
             typeof: String,
-            default: '70%'
+            default: '55%'
         }
     }
 }

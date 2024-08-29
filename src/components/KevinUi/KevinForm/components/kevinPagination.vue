@@ -75,6 +75,10 @@ export default {
         }
     },
     methods: {
+        repeat() {
+            this.currentPage =1
+            this.$emit('pagination', { page: 1, limit: this.pageSizes[0] })
+        },
         handleSizeChange(val) {
             if (this.currentPage * val > this.total) {
                 this.currentPage = 1

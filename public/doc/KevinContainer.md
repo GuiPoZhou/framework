@@ -25,3 +25,12 @@ ctx.$net('/api','get').then(response=>{
 //举例：快捷调用低码内置api函数  kevin_table_get_tableData即为低码表单渲染引起内置的方法，获取el-table的值
 _this.kevin_table_get_tableData(WIDGETID, COPY = true)
 ```
+```
+//请求字典接口
+/system/dict/data/type/字典类型
+```
+
+```
+//查看pdf
+'/pdfjs/web/viewer.html?file='+ window.globalEnv.VUE_APP_BASE_API
+```

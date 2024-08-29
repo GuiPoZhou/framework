@@ -8,11 +8,11 @@ export default {
                 disabled: widgetInfo.disabled,
                 clearable: widgetInfo.clearable,
                 showAllLevels: widgetInfo.showAllLevels,
+                size:widgetInfo.size,
                 props: {
                     ...widgetInfo.props
                 }
             }
-
             return (
                 <el-col class={this.draggableOpen ? 'RenderCol' : ''} key={widgetIndex} span={widgetInfo.colSpan}>
                     {

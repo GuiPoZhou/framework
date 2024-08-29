@@ -1,8 +1,9 @@
 <template>
     <BoDialog ref="BoDialog" :diaLogShow="showdiaLogShow" @close="e_close" :diaLogTitle="dialogTitle" width="40%">
         <template slot="bologbody">
-            <el-form :model="form" ref="form" label-width="100px" class="demo-ruleForm" :label-position="KevinJson.KevinWidget.formlabelPosition">
-                <KevinRenders ref="KevinRender" :context="context" :Widget="renderWidget" :form="form" />
+            <el-form :model="form" status-icon ref="form" label-width="100px" class="demo-ruleForm"
+                :label-position="KevinJson.KevinWidget.formlabelPosition">
+                <kevin-render ref="KevinRender" :context="context" :Widget="renderWidget" :form="form" />
             </el-form>
         </template>
         <template slot="bologfooter">
@@ -16,10 +17,10 @@
 </template>
 
 <script>
-import KevinRenders from '../../kevinRender.vue'
+// import KevinRenders from '../../kevinRender.vue'
 export default {
     components: {
-        KevinRenders
+        // KevinRenders
     },
     data() {
         return {
@@ -29,18 +30,19 @@ export default {
             dialogFooterButtons: [],
             dialogTitle: '',
             KevinJson: {
-                KevinWidget:{}
+                KevinWidget: {}
             },
             form: {
                 extData: {}
             },
-            businessEnv:'add'
+            businessEnv: 'add'
         }
     },
     methods: {
+        getList(){},
         init(KevinJson) {
             this.KevinJson = JSON.parse(JSON.stringify(KevinJson))
-            console.log('this.KevinJson',this.KevinJson)
+            console.log('this.KevinJson', this.KevinJson)
             this.dialogTitle = KevinJson.KevinWidget.title
             this.renderWidget = KevinJson.KevinWidget.children
             this.dialogFooterButtons = KevinJson.KevinWidget.diaLogFooterButton
@@ -49,7 +51,12 @@ export default {
             this.$nextTick(() => {
                 this.runWidgetAutoEvents(this.KevinJson.KevinWidget.autoEvents)
             })
-            
+
+        },
+        // 弹框底部动态按钮事件执行
+        e_dialogButtonEvents(widgetInfo) {
+            new Function('ctx', '_this', 'widgetInfo', widgetInfo.events)(this, this.$refs.KevinRender, widgetInfo)
+            this.$forceUpdate()
         },
         runWidgetAutoEvents(autoEvents) {
             if (autoEvents) {
@@ -67,14 +74,14 @@ export default {
 </script>
 
 <style scoped>
-
 .el-row {
-  display: flex;
-  flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
-.el-row div{
+
+.el-row div {
     width: 100%;
     display: flex;
-  flex-wrap: wrap;
+    flex-wrap: wrap;
 }
 </style>

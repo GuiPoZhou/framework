@@ -107,7 +107,6 @@ export default {
             this.e_getMessageList()
         },
         e_goMessageInfo(item, index) {
-            console.log('aa', item)
             this.e_read(item.id, index)
             this.e_goPath(item)
             this.$emit('close')
@@ -136,18 +135,15 @@ export default {
             })
         },
         e_getMessageList() {
-            console.log('当前页码', this.queryParams.pageNum)
             this.$net('/message/list', 'get', this.queryParams).then(re => {
                 this.messageList = [...this.messageList, ...re.data.list]
                 this.total = re.data.total
-                console.log('this.messageList.length', this.messageList.length)
                 this.messageList.length == this.total ? this.isGetAll = true : this.isGetAll = false
             })
         },
         loadMoreContent() {
             // Implement your lazy loading logic here, e.g., fetching more data
             // and appending it to the existing content.
-            console.log('Loading more content...');
         },
         init() {
             this.drawer = true
@@ -158,7 +154,6 @@ export default {
             this.$emit('close')
         },
         load() {
-            console.log('分页加载')
             this.queryParams.pageNum += 1
             this.e_getMessageList()
         }

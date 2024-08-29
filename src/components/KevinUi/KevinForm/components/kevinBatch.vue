@@ -38,7 +38,7 @@
                 </div>
             </div>
 
-            <el-button slot="reference" type="text" class="kevin_batch_button">{{ editButtonTile }}</el-button>
+            <el-button :disabled="disabled" slot="reference" type="text" class="kevin_batch_button">{{ editButtonTile }}</el-button>
         </el-popover>
     </div>
 </template>
@@ -52,7 +52,8 @@ export default {
         actionLabel: String,
         interval: Number,
         unit: String,
-        count: Number
+        count: Number,
+        disabled:Boolean
     },
     data() {
         return {

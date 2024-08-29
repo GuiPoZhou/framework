@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>电子围栏设置</title>
+    <script src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=IeMzfzpurRodFSNCKnxxe310pmCW482d"></script>
+</head>
+<body>
+    <div id="container" style="width: 100%; height: 500px;"></div>
+    <div>
+        <label>经度：<input type="text" id="lng"></label>
+        <label>纬度：<input type="text" id="lat"></label>
+        <button id="setGeofence">设置电子围栏</button>
+    </div>
+
+    <script>
+        // 初始化地图
+        var map = new BMapGL.Map("container");
+        map.centerAndZoom(new BMapGL.Point(116.404, 39.915), 18);
+        map.enableScrollWheelZoom(true);
+
+        var geofence = null;
+
+        // 设置电子围栏
+        document.getElementById('setGeofence').onclick = function() {
+            var lng = parseFloat(document.getElementById('lng').value);
+            var lat = parseFloat(document.getElementById('lat').value);
+            var center = new BMapGL.Point(lng, lat);
+
+            if (geofence) {
+                map.removeOverlay(geofence);
+            }
+
+            // 创建圆形电子围栏
+            geofence = new BMapGL.Circle(center, 1000, {
+                strokeColor: "red",
+                strokeWeight: 2,
+                strokeOpacity: 0.5
+            });
+
+            map.addOverlay(geofence);
+            map.centerAndZoom(center, 13);
+        };
+    </script>
+</body>
+</html>

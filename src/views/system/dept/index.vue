@@ -29,7 +29,6 @@
             <el-col :span="1.5">
                 <el-button
                     type="primary"
-                    plain
                     icon="el-icon-plus"
                     size="mini"
                     @click="handleAdd"
@@ -40,7 +39,6 @@
             <el-col :span="1.5">
                 <el-button
                     type="info"
-                    plain
                     icon="el-icon-sort"
                     size="mini"
                     @click="toggleExpandAll"
@@ -59,6 +57,7 @@
             :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         >
             <el-table-column prop="deptName" label="部门名称" width="260" ></el-table-column>
+            <el-table-column prop="deptAbbreviation" label="部门简称" width="200" ></el-table-column>
             <el-table-column prop="orderNum" label="排序" width="200" align="center"></el-table-column>
             <el-table-column prop="extDeptCode" label="外部ID" width="200" align="center"></el-table-column>
             <el-table-column prop="deptType" label="类型" width="200" align="center">
@@ -124,6 +123,11 @@
                             <el-input v-model="form.deptName" placeholder="请输入部门名称"/>
                         </el-form-item>
                     </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="部门简称" prop="deptAbbreviation">
+                      <el-input v-model="form.deptAbbreviation" placeholder="请输入部门简称"/>
+                    </el-form-item>
+                  </el-col>
                     <el-col :span="12">
                         <el-form-item label="显示排序" prop="orderNum">
                             <el-input-number v-model="form.orderNum" controls-position="right" :min="0"/>
@@ -182,6 +186,14 @@
                             </el-radio-group>
                         </el-form-item>
                     </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="是否检测部门">
+                      <el-radio-group v-model="form.detectFlag">
+                        <el-radio :label="0">否</el-radio>
+                        <el-radio :label="1">是</el-radio>
+                      </el-radio-group>
+                    </el-form-item>
+                  </el-col>
                 </el-row>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -222,7 +234,7 @@ export default {
             // 查询参数
             queryParams: {
                 deptName: undefined,
-                status: undefined
+                status: '0'
             },
             deptTypeList:[
                 {
@@ -315,6 +327,7 @@ export default {
                 leader: undefined,
                 phone: undefined,
                 email: undefined,
+              deptAbbreviation: undefined,
                 status: "0",
                 deptType:1
             };

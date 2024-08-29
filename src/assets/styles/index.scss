@@ -8,6 +8,7 @@
 @import "./element_boshland/theme.scss";
 @import "./element_boshland/leftMenu.scss";
 @import "./kevin_lowcode.scss";
+
 body {
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
@@ -122,6 +123,7 @@ aside {
 //main-container全局样式
 .app-container {
   padding: 10px;
+  padding-top: 20px;
 }
 
 .components-container {
@@ -189,6 +191,7 @@ aside {
 .multiselect--active {
   z-index: 1000 !important;
 }
+
 // #app .sidebar-container .el-submenu .is-active {
 //   background-color: #DCE5FF !important;
 //   color: #151515 !important;
@@ -206,6 +209,7 @@ aside {
   padding: 1px 0 !important;
   height: 40px;
 }
+
 // 主列表页面 顶部区域
 .a-c-top {
   //margin-top: 10px;
@@ -215,8 +219,9 @@ aside {
   //padding: 0 10px;
   padding-top: 20px;
   // padding-bottom: -10px;
-  box-shadow: 0 2px 4px 0 rgba(167,164,164,0.50);
+  box-shadow: 0 2px 4px 0 rgba(167, 164, 164, 0.50);
 }
+
 .a-c-bottom {
   margin-top: 10px;
   background-color: #fff;
@@ -226,15 +231,18 @@ aside {
   padding-left: 30px;
   //border: 1px solid #E9E9E9;
   border-radius: 4px;
-  box-shadow: 0 2px 4px 0 rgba(167,164,164,0.50);
+  box-shadow: 0 2px 4px 0 rgba(167, 164, 164, 0.50);
 }
+
 .a-c-t-btnarea {
   margin-left: 10px;
   display: inline-block
 }
+
 .details {
   background: #ffffff;
 }
+
 // dialog弹框 相关
 
 .el-dialog__header {
@@ -260,12 +268,12 @@ aside {
   display: flex;
   margin-right: 80%;
   flex-direction: column;
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  max-height:700px;
-  max-width:calc(100% - 30px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 700px;
+  max-width: calc(100% - 30px);
 }
 
 .el-dialog__body {
@@ -299,13 +307,14 @@ aside {
   justify-content: space-between;
 }
 
-.ms-15{
+.ms-15 {
   display: flex;
   width: 80%;
   margin-bottom: 40px;
   padding-bottom: 10px;
-  border-bottom: 1px solid rgba(221,221,221,1);
-  .xing{
+  border-bottom: 1px solid rgba(221, 221, 221, 1);
+
+  .xing {
     color: red;
     margin-right: 3px;
     text-align: right;
@@ -315,13 +324,15 @@ aside {
     box-sizing: border-box;
     line-height: 36px;
   }
-  .lable{
+
+  .lable {
     display: block;
     margin-right: 13px;
     font-weight: 600;
     line-height: 36px;
   }
-  .value{
+
+  .value {
     line-height: 36px;
     margin-right: 15px;
   }
@@ -335,7 +346,7 @@ aside {
   margin-left: 20px;
 }
 
-.dialog-title .topTilte .taskSerial{
+.dialog-title .topTilte .taskSerial {
   font-size: 16px;
   margin-left: 30px;
 }
@@ -416,11 +427,12 @@ aside {
 .el-dialog__body {
   //height: 100vh !important;
 }
-.el-dialog__body .el-form-item--medium .el-form-item__label{
+
+.el-dialog__body .el-form-item--medium .el-form-item__label {
   margin-bottom: -14px;
 }
 
-.el-dialog__body .el-col{
+.el-dialog__body .el-col {
   margin-bottom: 10px;
 }
 
@@ -439,12 +451,12 @@ aside {
 }
 
 .el-dialog.is-fullscreen {
-  height: auto !important;
+  // height: auto !important;
 }
 
 // 弹框全屏部分
 .el-dialog.is-fullscreen {
- max-height: 100vh !important;
+  max-height: 100vh !important;
 }
 
 // .fullScreen .el-dialog__wrapper {
@@ -462,19 +474,23 @@ aside {
 ::-webkit-scrollbar-track-piece {
   background-color: transparent;
 }
+
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
   background-color: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   border-radius: 6px;
   background-color: hsla(220, 4%, 58%, .3);
 }
 
-.el-table__fixed-right::before, .el-table__fixed::before{
+.el-table__fixed-right::before,
+.el-table__fixed::before {
   background: none !important;
 }
+
 .indexName {
   font-size: 16px;
   color: #17233D;
@@ -484,14 +500,17 @@ aside {
   margin-block-start: 0;
   margin-block-end: 0;
 }
+
 .searchform .el-form-item {
   margin-bottom: 10px !important;
 }
+
 .detailsbox {
   background: #ffffff;
   border: 1px solid #DCDEE2;
   margin: 16px;
 }
+
 .returns {
   font-size: 16px;
   color: #17233D;
@@ -499,16 +518,19 @@ aside {
   cursor: pointer;
   padding-left: 5px;
 }
+
 .topbox {
   padding: 20px 15px;
   border-bottom: 1px solid #E8EAEC;
 }
+
 .detailName {
   font-size: 16px;
   color: #17233D;
   font-weight: bold;
   padding-left: 30px;
 }
+
 .btnbox {
   display: flex;
   align-items: center;
@@ -516,18 +538,19 @@ aside {
   padding-bottom: 30px;
 }
 
-.details-title{
+.details-title {
   display: flex;
   justify-content: space-between;
   padding: 10px 20px 0px 20px;
-  .text{
+
+  .text {
     font-size: 16px;
     color: #17233D;
     font-weight: bold;
     padding-left: 5px;
   }
 
-  .icon{
+  .icon {
     display: inline-block;
     height: 18px;
     background: red;
@@ -544,40 +567,162 @@ aside {
   border-radius: 100%;
   margin: 0 auto;
 }
-.el-row{
-  display:flex;
+
+.el-row {
+  display: flex;
   flex-wrap: wrap;
 }
-.el-table th.el-table__cell > .cell {
+
+.el-table th.el-table__cell>.cell {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .el-input.is-disabled .el-input__inner {
   color: #6d6f6f;
 }
-.el-radio__input.is-disabled + span.el-radio__label {
+
+.el-radio__input.is-disabled+span.el-radio__label {
   color: #6d6f6f;
 }
+
 .numbertype {
   color: #6d6f6f !important;
 }
+
 .el-textarea.is-disabled .el-textarea__inner {
   color: #6d6f6f;
 }
+
 .el-radio__input.is-disabled.is-checked .el-radio__inner::after {
   background-color: #b7b5b5;
 }
+
 .el-radio__input.is-disabled.is-checked .el-radio__inner {
   background-color: #d7d7d8;
   border-color: #cfcfd0;
 }
+
 .CodeMirror {
   font-family: monospace;
   height: 100% !important;
   color: black;
   direction: ltr;
 }
+
 .el-message--error {
   z-index: 2300 !important;
 }
+
+.el-button--primary:not(.is-disabled) {
+  background-color: var(--my-btnPrimaryColor) !important;
+  border-color: var(--my-btnPrimaryColor) !important;
+}
+
+.el-button--primary:is(.is-disabled) {
+  background-color: #c8c9cc !important;
+  border-color: #c8c9cc !important;
+}
+
+.el-button--primary:not(.is-disabled):hover,
+.el-button--primary:not(.is-disabled):focus {
+  background-color: var(--my-btnPrimaryColor) !important;
+  border-color: var(--my-btnPrimaryColor) !important;
+}
+
+.el-button---:not(.is-disabled):focus,
+.el-button---:not(.is-disabled):hover {
+  color: var(--my-btnPrimaryColor) !important;
+  border-color: var(--my-btnPrimaryColor) !important;
+}
+
+.el-pagination.is-background .el-pager li:not(.disabled).active {
+  background-color: var(--my-otehrPrimary) !important;
+}
+
+.el-pager li.active,
+.el-pager li:hover {
+  color: var(--my-otehrPrimary) !important;
+}
+
+.el-pagination.is-background .el-pager li:not(.disabled):hover {
+  color: var(--my-otehrPrimary) !important;
+}
+
+.el-tabs__item.is-active,
+.el-tabs__item:hover {
+  color: var(--my-otehrPrimary) !important;
+}
+
+.el-input__inner:focus {
+  border-color: var(--my-otehrPrimary) !important;
+}
+
+.el-textarea__inner:focus {
+  border-color: var(--my-otehrPrimary) !important;
+}
+
+.el-button--text:not(.is-disabled) {
+  color: var(--my-btnPrimaryColor) !important;
+  font-size: var(--my-formFountSize) !important;
+}
+
+.el-button--text:is(.is-disabled) {
+  font-size: var(--my-formFountSize) !important;
+}
+
+.el-table .el-dropdown-link {
+  color: var(--my-btnPrimaryColor) !important;
+}
+
+.el-menu-item,
+.el-submenu__title {
+  font-family: 'PingFang SC Regular' !important;
+  font-size: var(--my-navFountSize) !important;
+}
+
+.el-dropdown-menu__item:focus,
+.el-dropdown-menu__item:not(.is-disabled):hover {
+  color: var(--my-otehrPrimary) !important;
+}
+
+.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  background-color: var(--my-otehrPrimary) !important;
+  border-color: var(--my-otehrPrimary) !important;
+}
+
+.el-select-dropdown__item.selected {
+  color: var(--my-otehrPrimary) !important;
+}
+
+.el-pagination__sizes .el-input .el-input__inner:hover {
+  border-color: var(--my-otehrPrimary) !important;
+}
+
+.el-table {
+  font-family: 'PingFang SC Regular' !important;
+  font-size: var(--my-formFountSize) !important;
+}
+
+.el-table th>.cell {
+  font-size: var(--my-formFountSize) !important;
+}
+
+.el-switch.is-checked .el-switch__core {
+  background-color: var(--my-otehrPrimary) !important;
+  border-color: var(--my-otehrPrimary) !important;
+}
+
+.tags-view-container .tags-view-wrapper .tags-view-item {
+  color: var(--my-navTopNoFount) !important;
+}
+
+.sidebar-logo-container .sidebar-logo-link .sidebar-title {
+  font-size: var(--my-logoFountSize) !important;
+}
+
+// .el-message-box__wrapper {
+//   z-index: 20001 !important;
+// }

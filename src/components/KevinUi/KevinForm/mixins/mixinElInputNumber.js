@@ -25,7 +25,7 @@ export default {
                     }
                     {
                         widgetInfo.vModelType == 'fixed' ?
-                            <el-form-item  class={isLangLabel ? "foldLabel" : ''} label={widgetInfo.title} prop={widgetInfo.vModel}
+                            <el-form-item  class={this.context.KevinJson.KevinWidget.formlabelPosition != 'top' && isLangLabel ? "foldLabel" : ''} label={widgetInfo.title} prop={widgetInfo.vModel}
                                 rules={this.configFormItemRules(widgetInfo)}
 
                             >
@@ -36,7 +36,7 @@ export default {
                                 >
                                 </el-input-number>
                             </el-form-item> :
-                            <el-form-item  class={isLangLabel ? "foldLabel" : ''} label={widgetInfo.title} prop={`extData.${widgetInfo.vModel}`}
+                            <el-form-item  class={this.context.KevinJson.KevinWidget.formlabelPosition != 'top' && isLangLabel ? "foldLabel" : ''} label={widgetInfo.title} prop={`extData.${widgetInfo.vModel}`}
                                 rules={this.configFormItemRules(widgetInfo)}
                             >
                                 <el-input-number v-model={this.form.extData[widgetInfo.vModel]} {...{ props: ElInputNumberAttr }}></el-input-number>

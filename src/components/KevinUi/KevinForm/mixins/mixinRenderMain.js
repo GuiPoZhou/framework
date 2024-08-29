@@ -84,6 +84,8 @@ export default {
                         return this.renderKevinUploadDevice(widgetInfo, widgetIndex)
                     case 'kevin-device-acceptance':
                         return this.renderKevinDeviceAcceptance(widgetInfo, widgetIndex)
+                    case 'kevin-verificationPlan-module':
+                        return this.renderKevinVerficationPlan(widgetInfo, widgetIndex)
                     case 'kevin-batch':
                         return this.renderKevinBatch(widgetInfo, widgetIndex)
                     case 'kevin-search':
@@ -94,6 +96,10 @@ export default {
                         return this.renderKevinGrid(widgetInfo, widgetIndex)
                     case 'el-tree':
                         return this.renderELTree(widgetInfo, widgetIndex)
+                    case 'kevin_equipment_chart':
+                        return this.renderKevinEquipmentChart(widgetInfo, widgetIndex)
+                    case 'kevin-dialog':
+                        return this.renderKevinDiaLog(widgetInfo, widgetIndex)
                     default:
                         return null; // You can handle other cases or return some default value if needed.
                 }

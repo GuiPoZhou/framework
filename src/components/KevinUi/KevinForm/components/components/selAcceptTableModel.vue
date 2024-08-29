@@ -1,5 +1,5 @@
 <template>
-    <KevinDrawer :show="showDrawer" :title="`选择验收模板·${typeName}`" size="40%" direction="ltr">
+    <KevinDrawer :show="showDrawer" :title="`选择模板`" size="40%" direction="ltr">
         <el-button slot="topbuttons" size="small" @click="close" style="margin-left: 3rem;">关闭</el-button>
         <widgetEditContainer :showLeft="false">
             <div slot="wecRight" style="padding: 0.7rem;">

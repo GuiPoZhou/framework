@@ -4,6 +4,18 @@ export default {
             if (widgetInfo.isHide) {
                 return
             }
+            widgetInfo.options.dataSource.list.forEach(LL=>{
+                if(!LL.form){
+                    LL.form = {
+                        acceptTime:'',
+                        acceptUser:'',
+                        allAcceptResult:'',
+                        inspectDate:'',
+                        inspectResult:'',
+                        remark:''
+                    }
+                }
+            })
             return (
                 <el-col class={this.draggableOpen ? 'RenderCol' : ''} key={widgetIndex} span={widgetInfo.colSpan}>
                     {
@@ -12,6 +24,7 @@ export default {
                     <kevinDeviceAcceptance
                         ref='kevinDeviceAcceptance'
                         context={this.context}
+                        disabled={widgetInfo.disabled}
                         widgetOptions={widgetInfo.options}
                         onConfirmAcceptList={(list) => { this.e_confirmAcceptList(list, widgetInfo) }}
                         onDeviceTableEvents={({ scope, activeName }) => {
@@ -97,10 +110,10 @@ export default {
             if (this.draggableOpen) {
                 return (
                     <div class="eidt_area">
-                        <el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
+                        {/* <el-tag type="danger" size="mini" class="widgetid copybox" data-clipboard-text={params.WIDGETID}
                             onClick={() => {
                                 this.copyWidgetId()
-                            }}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag>
+                            }}>WIDGETID:{this.formatUUIDWithStars(params.WIDGETID)}</el-tag> */}
                         <el-button style="color:red" type='text' onClick={() => {
                             this.removeTabsWidget(params)
                         }}>删除组件
@@ -168,10 +181,16 @@ export default {
         },
         // 替换当前组件的的json
         kevindeviceacceptance_set_json(jsonData, WIDGETID) {
-            console.log('jsonData', jsonData)
             let widgetInfo = this.findWidgetNode(this.Widget, WIDGETID)
             widgetInfo.options
                 = jsonData.options
+        },
+        // 根据是否在采购时选择是否需要计量 来删除计量验收这个节点
+        kevindeviceaccept_deletejiliang(WIDGETID) {
+            let widgetInfo = this.findWidgetNode(this.Widget, WIDGETID)
+            widgetInfo.options.dataSource.list = widgetInfo.options.dataSource.list.filter(item => {
+                return item.code != 'METROLOGY_ACCEPTANCE'
+            })
         },
         //================================ 工具方法🔼 ==========================
     }

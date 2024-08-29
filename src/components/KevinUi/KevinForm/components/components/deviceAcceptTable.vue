@@ -7,6 +7,10 @@ export default {
         selComponent,
     },
     props: {
+        disabled: {
+            typeof: Boolean,
+            default: false
+        },
         tableColumns: Array,
         tableData: Array,
         tableActions: Array,
@@ -55,6 +59,7 @@ export default {
                                 if (!slotButtonInfo.isHide) {
                                     return (
                                         <el-button type="text"
+                                            disabled={this.disabled}
                                             onClick={() => {
                                                 this.mainTableActionButtonEvents(slotButtonInfo, scope, columnInfo)
                                             }}
@@ -69,6 +74,9 @@ export default {
 
         },
         checkcommonTableSlotInputRender(columnInfo) {
+            if (this.disabled) {
+                return true
+            }
             if (this.context.accepttanceType && this.activeName == this.context.accepttanceType) {
                 return false
             } else if (this.context.accepttanceType) {
@@ -108,7 +116,7 @@ export default {
                 scopedSlots[columnInfo['slotName']] = (scope) => {
                     if (columnInfo.canEditCellFormType && scope.row.vModelActionType == '-') {
                         return (
-                            <el-button type="text" onClick={() => { this.e_openSelCom(scope) }}>选择组件</el-button>
+                            <el-button disabled={this.disabled} type="text" onClick={() => { this.e_openSelCom(scope) }}>选择组件</el-button>
                         )
                     } else if (!columnInfo.canEditCellFormType && scope.row.vModelActionType == 'input') {
                         return this.commonTableSlotInputRender(scope, columnInfo)

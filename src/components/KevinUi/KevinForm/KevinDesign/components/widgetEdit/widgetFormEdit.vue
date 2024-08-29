@@ -19,6 +19,14 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
+                        <el-form-item label="弹框容器是否全屏" prop="fullScreen">
+                            <el-select v-model="editParams.fullScreen">
+                                <el-option label="是" :value="true"></el-option>
+                                <el-option label="否" :value="false"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
                         <el-form-item label="弹框宽度百分比" prop="width">
                             <el-input-number v-model="editParams.width" :min="30" :max="100"></el-input-number>
                         </el-form-item>
@@ -58,8 +66,8 @@
                         <el-divider content-position="left">表单底部操作按钮管理</el-divider>
                         <el-button size="mini" type="success" style="margin-bottom: 1rem;"
                             @click="e_adddiaLogFooterButton">新增底部按钮</el-button>
-                        <el-table :data="editParams.diaLogFooterButton" style="width: 100%" border
-                            :row-class-name="currentEditRow">
+                        <el-table class="logBottomBtns" ref="logBottomBtns" :data="editParams.diaLogFooterButton"
+                            style="width: 100%" border :row-class-name="currentEditRow">
                             <el-table-column prop="title" label="按钮名称" align="center">
                                 <template slot-scope="scope">
                                     <el-input v-model="scope.row.title"></el-input>
@@ -86,6 +94,15 @@
                                     </el-select>
                                 </template>
                             </el-table-column>
+                            <el-table-column prop="size" label="按钮权限" align="center">
+                                <template slot-scope="scope">
+                                    <el-input v-model="scope.row.perm" readonly>
+                                        <el-button slot="append" type="text"
+                                            @click="e_editFooterButtonPerm(scope)">选择</el-button>
+                                    </el-input>
+                                </template>
+                            </el-table-column>
+
                             <el-table-column label="状态脚本" align="center">
                                 <template slot-scope="scope">
                                     <el-button type="text" @click="e_editFooterButtonStatusEvents(scope)">编辑脚本</el-button>
@@ -106,20 +123,24 @@
         <div class="wfe_left">
             <KevinEditors ref="KevinEditors" @input="handleEditorInput" />
         </div>
-
+        <menuPerm ref="menuPerm" v-if="showMenuPerm" @close="showMenuPerm = false" @confirmPerm="e_confirmPerm" />
     </div>
 </template>
 
 <script>
 import KevinEditors from '../../../../../KevinEditor/index'
 import { v4 as uuidv4 } from 'uuid';
-
+import Sortable from "sortablejs";
+import menuPerm from './components/menuPerm.vue';
 export default {
     components: {
-        KevinEditors
+        KevinEditors,
+        Sortable,
+        menuPerm
     },
     data() {
         return {
+            showMenuPerm: false,
             showDrawer: true,
             editParams: {},
             editTag: '',
@@ -127,6 +148,38 @@ export default {
         }
     },
     methods: {
+        rowDropmainHomeButtons() {
+            const that = this;
+            const tbody = document.querySelector(
+                '.logBottomBtns .el-table__body-wrapper tbody',
+            );
+
+            new Sortable(tbody, {
+                animation: 150,  //定义排序动画的时间  单位是ms 
+                ghostClass: 'blue-background-class',   //drop placeholder的css类名  可以不设置
+                //开始拖拽
+                onStart: function (e) {
+                    e.oldIndex;  // 父元素索引
+                },
+                //结束拖拽
+                onEnd: function (obj) {
+                    const list = JSON.parse(
+                        JSON.stringify(that.editParams.diaLogFooterButton),
+                    );
+                    that.$set(that.editParams, 'diaLogFooterButton', [])
+                    const temp = list.splice(obj.oldIndex, 1)[0];
+                    list.splice(obj.newIndex, 0, temp);
+                    that.$nextTick(() => {
+                        that.$set(that.editParams, 'diaLogFooterButton', list)
+                        that.$refs.logBottomBtns.doLayout()
+                    })
+                    that.editType = ''
+                    that.editIndex = -1
+                    that.$refs.KevinEditors.changeEditor({ value: "" });
+
+                },
+            });
+        },
         currentEditRow({ row, rowIndex }) {
             // 在这个方法中根据某个值来设置行的CSS类
             if (this.editTag == 'footerButton' && rowIndex == this.editIndex) {
@@ -134,6 +187,20 @@ export default {
             } else {
                 return ''; // 默认样式
             }
+        },
+        e_confirmPerm(perm) {
+            this.showMenuPerm = false
+            let info = this.editParams.diaLogFooterButton[this.editIndex]
+            info.perm = perm
+            this.$set(this.editParams.diaLogFooterButton, this.editIndex, info)
+            this.editParams = { ...this.editParams }
+        },
+        e_editFooterButtonPerm(scope) {
+            this.editIndex = scope.$index
+            this.showMenuPerm = true
+            this.$nextTick(() => {
+                this.$refs.menuPerm.init()
+            })
         },
         e_editFooterButtonStatusEvents(scope) {
             this.editTag = 'footerButtonStatus'
@@ -155,6 +222,7 @@ export default {
                 title: '新增按钮',
                 type: 'primary',
                 size: 'small',
+                isLoading: false,
                 statusEvents: 'return true',
                 events: "console.log('新增的底部按钮')",
                 WIDGETID: uuidv4()
@@ -187,7 +255,7 @@ export default {
             code = code.trim();
 
             // 在大括号前后添加空格
-            code = code.replace(/\s*{\s*/g, ' { ').replace(/\s*}\s*/g, ' } ');
+            // code = code.replace(/\s*{\s*/g, ' { ').replace(/\s*}\s*/g, ' } ');
 
             // 在逗号前后添加空格
             // code = code.replace(/,(\S)/g, ', $1');
@@ -248,6 +316,10 @@ export default {
         init(editParams) {
             this.showDrawer = true
             this.editParams = JSON.parse(JSON.stringify(editParams))
+            let _this = this;
+            _this.$nextTick(() => {
+                _this.rowDropmainHomeButtons();
+            });
         },
         close() {
             this.$emit('close')

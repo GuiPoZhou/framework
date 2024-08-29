@@ -35,6 +35,13 @@
                         <el-divider content-position="left">上传组件事件配置</el-divider>
                         <el-row>
                             <el-col :span="12">
+                                <el-form-item label="状态脚本事件" prop="events.disabledCode">
+                                    <el-input v-model="slotParams.events.disabledCode" readonly>
+                                        <el-button slot="append" @click="e_editdisabledCode">编辑</el-button>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
                                 <el-form-item label="上传成功回调" prop="events.onSuccess">
                                     <el-input v-model="slotParams.events.onSuccess" readonly>
                                         <el-button slot="append" @click="e_editonSuccess">编辑</el-button>
@@ -52,6 +59,13 @@
                                 <el-form-item label="删除按钮事件" prop="events.removeUploadFile">
                                     <el-input v-model="slotParams.events.removeUploadFile" readonly>
                                         <el-button slot="append" @click="e_editremoveUploadFile">编辑</el-button>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="查看按钮事件" prop="events.showCode">
+                                    <el-input v-model="slotParams.events.showCode" readonly>
+                                        <el-button slot="append" @click="e_editshowCode">编辑</el-button>
                                     </el-input>
                                 </el-form-item>
                             </el-col>
@@ -90,6 +104,15 @@ export default {
         }
     },
     methods: {
+        e_editshowCode() {
+            this.editType = 'editShowCode'
+            this.$refs.KevinEditors.changeEditor({ value: this.slotParams.events.showCode || 'console.log("行数据",scope)' });
+
+        },
+        e_editdisabledCode() {
+            this.editType = 'editDisabledCode'
+            this.$refs.KevinEditors.changeEditor({ value: this.slotParams.events.disabledCode || 'return false' });
+        },
         e_editremoveUploadFile() {
             this.editType = 'removeUploadFile'
             this.$refs.KevinEditors.changeEditor({ value: this.slotParams.events.removeUploadFile || "ctx.$confirm('确定删除该文件吗？').then(_=>{let list=JSON.parse(JSON.stringify(widgetInfo.fileList));const arr=list.filter(fileInfo=>{return fileInfo.uid!==prop.file.uid});widgetInfo.fileList=arr})" });
@@ -109,6 +132,10 @@ export default {
                 this.slotParams.events.downloadFile = this.formatCode(code)
             } else if (this.editType == 'removeUploadFile') {
                 this.slotParams.events.removeUploadFile = this.formatCode(code)
+            } else if (this.editType == 'editDisabledCode') {
+                this.slotParams.events.disabledCode = this.formatCode(code)
+            } else if (this.editType == 'editShowCode') {
+                this.$set(this.slotParams.events, 'showCode', this.formatCode(code))
             }
         },
         formatCode(code) {

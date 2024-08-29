@@ -260,9 +260,37 @@
         debuggerScriptPath: './debugger.js'
       };
     }
+    function extractParams(url) {
+      var params = {};
+      var queryString = url.split('?')[1];
+      if (!queryString) {
+        return params;
+      }
+      var keyValuePairs = queryString.split('&');
+      keyValuePairs.forEach(function (keyValue) {
+        var pair = keyValue.split('=');
+        var key = decodeURIComponent(pair[0]);
+        var value = decodeURIComponent(pair[1] || '');
+        params[key] = value;
+      });
+      return params;
+    }
 
     function webViewerLoad() {
+      // debugger
       var config = getViewerConfiguration();
+      let queryPath = window.location.href.split('?file=')
+      let queryParamsFirst = extractParams(queryPath[1]);
+      if (queryParamsFirst && queryParamsFirst.noneStr) {
+        let noneStr = queryParamsFirst.noneStr
+        noneStr.split(',').forEach(function (item) {
+          try {
+            config.toolbar[item].style.display = 'none'
+
+          } catch { }
+        })
+      }
+
       window.PDFViewerApplication = pdfjsWebApp.PDFViewerApplication;
       window.PDFViewerApplicationOptions = pdfjsWebAppOptions.AppOptions;
       var event = document.createEvent('CustomEvent');
@@ -1918,7 +1946,6 @@
 
           xhr.open('GET', file);
           xhr.responseType = 'arraybuffer';
-          console.log('aaa',aaa)
           xhr.setRequestHeader('Authorization', localStorage.getItem('Admin-Token'));
           xhr.send();
           return;
@@ -15523,7 +15550,7 @@
 
     function renderPage(activeServiceOnEntry, pdfDocument, pageNumber, size) {
       var scratchCanvas = activeService.scratchCanvas;
-      var PRINT_RESOLUTION = _app_options.AppOptions.get('printResolution') || 150;
+      var PRINT_RESOLUTION = _app_options.AppOptions.get('printResolution') || 300;
       var PRINT_UNITS = PRINT_RESOLUTION / 72.0;
       scratchCanvas.width = Math.floor(size.width * PRINT_UNITS);
       scratchCanvas.height = Math.floor(size.height * PRINT_UNITS);

@@ -44,6 +44,15 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
+                      <el-col :span="12">
+                        <el-form-item label="是否开启多选" prop="multiple">
+                            <el-select v-model="editParams.multiple">
+                                <el-option label="是" :value="true"></el-option>
+                                <el-option label="否" :value="false"></el-option>
+
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
                     <el-col :span="12">
                         <el-form-item label="是否可清空" prop="clearable">
                             <el-select v-model="editParams.clearable">

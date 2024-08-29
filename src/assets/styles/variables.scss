@@ -11,7 +11,7 @@ $panGreen: #30B08F;
 // 默认菜单主题风格
 $base-menu-color:#bfcbd9;
 $base-menu-color-active:#f4f4f5;
-$base-menu-background:#0E1438;
+$base-menu-background:var(--my-baseMenuLeftBg);
 $base-logo-title-color: #ffffff;
 
 $base-menu-light-color:rgba(0,0,0,.70);
@@ -19,7 +19,7 @@ $base-menu-light-background:#ffffff;
 $base-logo-light-title-color: #001529;
 
 $base-sub-menu-background:#fff;
-$base-sub-menu-hover:#001528;
+$base-sub-menu-hover:var(--my-menuActiveColor);
 
 // 自定义暗色菜单风格
 /**
